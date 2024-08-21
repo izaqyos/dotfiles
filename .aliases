@@ -1,0 +1,2386 @@
+# Author: Yosi Izaq
+#
+
+echo "LOADING $USER aliases for SAP MAC environment"
+#
+#gvim
+#alias gvim="gvim -font Courier\ Bold\ 11"
+#alias gvim="/Applications/MacVim.app/Contents/MacOS/MacVim"
+#alias mvim='open -a MacVim'
+alias mvim='/Applications/MacVim.app/Contents/bin/mvim'
+alias nvi='/opt/homebrew/bin/nvim'
+export VIM_SESSIONS="${HOME}/work/vim_sessions/"
+
+#alias gvim="gvim -font Sans\ 12 "
+
+
+#alias KB='less /cygdrive/c/work/KB/knowledge_base_unix  /cygdrive/c/work/KB/SCM_KB.txt  /cygdrive/c/work/KB/kb_acs  /cygdrive/c/work/KB/kb_jrules  /cygdrive/c/work/KB/javaKB  /cygdrive/c/work/KB/CPP/KB_cpp /cygdrive/c/work/KB/ant/antKB /cygdrive/c/work/KB/bash/KB_bash /cygdrive/c/work/KB/vi/KB_vi '
+alias tocifyKB='_tocifyKB'
+alias KBE="_open_KB_files -g"
+alias KBET="_open_KB_files -t"
+alias KBEN="_open_KB_files -n"
+alias KBEV="_open_KB_files -v"
+
+
+##paths related
+export MY_WORK_PATH="${HOME}/work/"
+export WORK_PATH="${MY_WORK_PATH}"
+export SAP_PATH="${MY_WORK_PATH}/SAP"
+export SAP_CASES_PATH="${MY_WORK_PATH}/SAP/CF/bugs/ServiceNow_SNOW/"
+export PRS_PATH="${SAP_PATH}/PRs"
+export SAP_LOGS_PATH="${SAP_PATH}/logs"
+export CFMANIFESTS_PATH="${SAP_PATH}/CF/Manifests"
+export CFDOCKERFILES_PATH="${SAP_PATH}/CF/Dockerfiles"
+export CFAUTODOCKERFILE_PATH="${SAP_PATH}/CF/Dockerfiles/cf-automation"
+alias cddockerfiles="cd ${CFDOCKERFILES_PATH}"
+alias cdmanifests="cd ${CFMANIFESTS_PATH}/"
+alias cdmanifests_activation="cd ${CFMANIFESTS_PATH}/activation"
+alias cdmanifests_transport="cd ${CFMANIFESTS_PATH}/transport"
+alias cdcfauto_dockerfile="cd ${CFAUTODOCKERFILE_PATH}"
+alias cdmanifests_sem="cd ${CFMANIFESTS_PATH}/semantic"
+alias cdmanifests_dt="cd ${CFMANIFESTS_PATH}/dt-approuter"
+alias cdmanifests_service_broker="cd ${CFMANIFESTS_PATH}/service_broker"
+export GIT_PATH="/Users/i500695/git/"
+export GITE_PATH="/Users/i500695/work/gitpublic/"
+export CF_AUTOMATION_PATH="${GIT_PATH}portal-cf-fs-automation"
+export CF_MAAS_CLIENT_PATH="${GIT_PATH}/maas-client"
+export CF_SHAREDLIB_PATH="${GIT_PATH}portal-cf-shared-lib"
+export CF_SITECONFIG_PATH="${GIT_PATH}portal-cf-site-configuration" 
+export CF_SITESERVICE_PATH="${GIT_PATH}portal-cf-site-service" 
+export CF_GUYDEVUTILS_PATH="${GIT_PATH}portal-cf-dev-utils-service"
+export SEMANTIC_PATH="${GIT_PATH}portal-cf-site-semantic-service"
+export TRANSPORT_PATH="${GIT_PATH}portal-cf-transport-service" 
+export PORTAL_GLOBAL_SERVICES_PATH="${GIT_PATH}portal-global-services" 
+export IMPORT_PATH="${GIT_PATH}cdm-import-service" 
+export EXPORT_PATH="${GIT_PATH}cdm-export-service" 
+export COMMONS_PATH="${GIT_PATH}portal-platform-commons" 
+export PROVISIONING_PATH="${GIT_PATH}/portal-cf-provisioning-service-new" 
+export AMQP_CLIENT_LIB_PATH="${GIT_PATH}/amqp-client" 
+export CDM_NESTJS_COMMONS_PATH="${GIT_PATH}/nestjs-common"
+export CDM_STORE_CLIENT_PATH="${GIT_PATH}/cdm-store-client"
+export CI_TOOLS_PATH="${GIT_PATH}/ci-tools"
+export CDM_GATLING_PATH="${GIT_PATH}/cf-gatling"
+export PORTAL_COMMONS_PATH="${GIT_PATH}portal-platform-commons"
+export CURR_PROJ_PATH="${SEMANTIC_PATH}"
+export CDM_STORE_PATH="${HOME}/git/portal-cf-cdm-store-service"
+export BACKBONE_AUTO_PATH="${HOME}/git/Backbone-Automations"
+
+export PORTAL_CLI_PATH="${HOME}/git/portal-cli"
+export GLOBAL_SERVICES_PATH="${HOME}/git/portal-global-services"
+export DESIGN_TIME_PATH="${HOME}/git/portal-cf-design-time-service"
+export TEAM_REPOS_PATHS=($CDM_STORE_PATH $TRANSPORT_PATH $PROVISIONING_PATH $DESIGN_TIME_PATH $AMQP_CLIENT_LIB_PATH $CDM_NESTJS_COMMONS_PATH $CDM_STORE_CLIENT_PATH $EXPORT_PATH $IMPORT_PATH $COMMONS_PATH)
+alias list_team_repos='list_team_repos'
+alias git_clone_team_repos="/Users/i500695/work/SAP/code/bash/clone_team_repos.sh"
+alias git_clone_all_repos="/Users/i500695/work/SAP/code/bash/clone_CF_repos.sh"
+alias git_update_all_repos="/Users/i500695/work/SAP/code/bash/update_all_from_master.sh"
+team_repos_list()
+{
+    for dir_path in ${TEAM_REPOS_PATHS[@]}; do 
+        dir_path_expanded=$(eval echo $dir_path)
+        echo $dir_path_expanded
+    done
+}
+
+team_repos_gitfp()
+{
+    echo "Running git fetch pull for local git branch in all team repositories"
+    for d in $(team_repos_list);
+    do 
+        echo -n "Running fetch pull in repo $d "
+        cd $d 
+        git fetch && git pull 
+        cd -
+        echo "---------------------------"
+    done
+}
+
+team_repos_current_git_br()
+{
+    echo "Listing current local git branch in all team repositories"
+    for d in $(team_repos_list);
+    do 
+        echo -n "git branch in repo $d "
+        cd $d 
+        echo "running git branch in dir $d"
+        git branch 
+        cd -
+        echo "---------------------------"
+    done
+
+}
+
+team_repos_grep()
+{
+    if [ -z $2 ]
+        then 
+        echo "please provide file name and pattern to search for"
+        echo "For example grep_team_repos package.json cdm-store-client"
+        return 0
+    fi
+
+    echo "searching pattern $2 in file $1 in all repos"
+    for d in $(team_repos_list);
+    do 
+        echo "searching in repo $d"
+        find $d -name node_modules -prune -o -name $1 | xargs grep -is $2
+        echo "---------------------------"
+    done
+
+}
+
+
+export DT_APPROUTER_PATH="${CFL_PATH}portal-cf-dt-approuter"
+export MY_LOGSFILTER_PATH="${CFL_PATH}myDev_Tools/dev-tools/loggy"
+export LOGGY_PATH="${CFL_PATH}myDev_Tools/dev-tools/loggy"
+alias cdlogs="cd ${SAP_LOGS_PATH}"
+alias cdgit="cd ${GIT_PATH}"
+alias cdgite="cd ${GITE_PATH}"
+alias cdgitej="cd ${GITE_PATH}/java"
+alias cdschema="cd ${GIT_PATH}/cdm-schema" 
+alias cdflpschema="cd ${GIT_PATH}/flpSchema/cdm-schema"
+alias cdbff="cd ${GIT_PATH}/portal-cf-dt-bff"
+alias cdservice_broker="cd ${GIT_PATH}/portal-cf-service-broker" 
+export DT_ACTIVATION_PATH="${GIT_PATH}portal-cf-activation-service"
+alias cdloggy="cd ${MY_LOGSFILTER_PATH}"
+alias cdcfl="cd ${CFL_PATH}"
+alias cdapprouterdt="cd ${DT_APPROUTER_PATH}"
+alias cdactivationservice="cd ${DT_ACTIVATION_PATH}"
+alias cdcfmaasclient="cd ${CF_MAAS_CLIENT_PATH}"
+alias cdcfautomation="cd ${CF_AUTOMATION_PATH}"
+alias cdcfsharedlib="cd ${CF_SHAREDLIB_PATH}"
+alias cdcfsiteconfig="cd ${CF_SITECONFIG_PATH}"
+alias cdcfsiteservice="cd ${CF_SITESERVICE_PATH}"
+alias cdsemantic="cd ${SEMANTIC_PATH}"
+alias cdguydevutils="cd ${CF_GUYDEVUTILS_PATH}"
+alias cdtransport="cd ${TRANSPORT_PATH}"
+alias cdportalglobal="cd ${PORTAL_GLOBAL_SERVICES_PATH}"
+alias cdimport="cd ${IMPORT_PATH}"
+alias cdexport="cd ${EXPORT_PATH}"
+alias cdcommons="cd ${COMMONS_PATH}"
+alias cdnestjscommons="cd ${CDM_NESTJS_COMMONS_PATH}"
+alias cdprovisioning="cd ${PROVISIONING_PATH}"
+alias cdampq_client="cd ${AMQP_CLIENT_LIB_PATH}"
+alias cdglobalservices="cd ${GLOBAL_SERVICES_PATH}"
+alias cdcdmstore="cd ${CDM_STORE_PATH}"
+alias cdbackbone_automations="cd ${BACKBONE_AUTO_PATH}"
+alias cdportalcli="cd ${PORTAL_CLI_PATH}"
+alias cddts="cd ${DESIGN_TIME_PATH}"
+alias cdcdmstoreclient="cd ${CDM_STORE_CLIENT_PATH}"
+alias cdcitools="cd ${CI_TOOLS_PATH}"
+alias cdgatling="cd ${CDM_GATLING_PATH}"
+alias cdcommons="cd ${PORTAL_COMMONS_PATH}"
+alias cdcur="cd ${CURR_PROJ_PATH}"
+export JS_PATH="${HOME}/work/code/javascript/SAP/"
+alias cdjs="cd ${JS_PATH}"
+export MY_LEET_PATH="${MY_WORK_PATH}/code/interviewQs/leetcode" 
+export MY_NODE_PATH="${MY_WORK_PATH}/code/nodejs/" 
+export MY_TS_PATH="${MY_WORK_PATH}/code/typescript/" 
+export MY_NESTJS_PATH="${MY_WORK_PATH}/code/nestjs/" 
+alias cdKB='cd ${MY_WORK_PATH}/KB/'
+alias cdwork='cd ${WORK_PATH}/'
+alias cdsap='cd ${SAP_PATH}/'
+alias cdcases='cd ${SAP_CASES_PATH}/'
+alias cdbcp='cd ${SAP_PATH}/BCP'
+alias cdprs='cd ${PRS_PATH}/'
+alias cdnode='cd $MY_NODE_PATH'
+alias cdts='cd $MY_TS_PATH'
+alias cdnestjs='cd $MY_NESTJS_PATH'
+alias cdnestjs_course='cd $MY_NESTJS_PATH/zero2heroUdemyCourse/nestjs-course-task-management'
+alias cdleet='cd $MY_LEET_PATH'
+alias vi='vim'
+alias updateManifestActivation_Yosi='cdactivationservice && cp ${CFMANIFESTS_PATH}/activation/manifest-dev.yosi01.yml manifest-dev.yml && cd -'
+alias updateManifestDTAppRouter_Yosi='cdapprouterdt && cp ${CFMANIFESTS_PATH}/dt-approuter/manifest-dev.yosi01.yml manifest-dev.yml && cd -'
+alias updateManifestDTAppRouter_Universe='cdapprouterdt && cp ${CFMANIFESTS_PATH}/dt-approuter/manifest-dev.universe.yml manifest-dev.yml && cd -'
+alias updateManifestDTAppRouter_guymos='cdapprouterdt && cp ${CFMANIFESTS_PATH}/dt-approuter/manifest-dev.guymos.yml manifest-dev.yml && cd -'
+alias updateManifestBFF_guymos='cdbff && cp ${CFMANIFESTS_PATH}/bff/manifest-dev_guymos.yml manifest-dev.yml && cd -'
+alias updateManifestSemYosi='cdsemantic && cp ${CFMANIFESTS_PATH}/semantic/manifest-dev.yosi01.yml manifest-dev.yml && cd -'
+alias updateManifestSemUniverse='cdsemantic && cp ${CFMANIFESTS_PATH}/semantic/manifest-dev.universe.yml manifest-dev.yml && cd -'
+alias updateManifestSemBoris='cdsemantic && cp ${CFMANIFESTS_PATH}/semantic/manifest-dev.borisl.yml manifest-dev.yml && cd -'
+alias updateManifestServiceBrokerYosi='cdservice_broker && cp ${CFMANIFESTS_PATH}/service_broker/manifest-dev.yosi01.yml manifest-dev.yml && cp ${CFMANIFESTS_PATH}/service_broker/catalog.json.yosi01 catalog.json && cd -'
+#cd_xxx
+alias cdcode='cd ${MY_WORK_PATH}/code/'
+alias cdml='cd ${MY_WORK_PATH}/code/ML'
+
+alias cdcodec11=' cd ${MY_WORK_PATH}/code/C11'
+alias cdcodec=' cd ${MY_WORK_PATH}/code/C'
+alias cdcodego=' cd ${MY_WORK_PATH}/code/go'
+alias cdcoderust=' cd ${MY_WORK_PATH}/code/rust'
+alias cdcodecpp=' cd ${MY_WORK_PATH}/code/CPP'
+alias cdcodepyth=' cd ${MY_WORK_PATH}/code/python'
+cdgo='cd ~/work/code/go'
+alias cdcodejava=' cd ${MY_WORK_PATH}/code/java'
+alias cdcode_interviewQs=' cd ${MY_WORK_PATH}/code/interviewQs'
+alias cdt='cd ~/temp/'
+alias cdtt='cd ~/temp/temp/'
+alias cdtt1='cd ~/temp/temp1/'
+alias cdtt2='cd ~/temp/temp2/'
+alias cdtt3='cd ~/temp/temp3/'
+__cleanuptemp__() {
+    echo "Dangerous command. make sure you are at temp dir. current dir ${PWD}"
+        while true; do
+        read -p  "Are you sure you want to delete all temp dir content?" yn
+            case $yn in
+            [Yy]* ) rm -rv !(*temp*); break;;
+            [Nn]* ) break;;
+            * ) echo "Please answer yes or no.";;
+            esac
+        done
+}
+alias cleanuptemp='__cleanuptemp__'
+#cd_xxx
+
+alias reloadbash='. ~/.bashrc'
+alias reloadalias='. ~/.aliases'
+
+#edit via vi
+alias vibashrc='vi ~/.bashrc'
+alias vialias='vi ~/.aliases'
+
+#edit via neovim
+alias nvibashrc='nvi ~/.bashrc'
+alias nvialias='nvi ~/.aliases'
+
+
+__scpdm()
+{
+    echo "copy file to PET ACQ Dev machine"
+        if [ $# -lt 2 ]
+            then
+                echo "Please provide file name and PET ACQ Host name"
+                return  0
+                fi
+
+                scp ${1}  ${USER_UNX}@${2}:/home/de680136/
+}
+
+__scptm()
+{
+    echo "copy file to PET ACQ Host machine"
+        if [ $# -lt 2 ]
+            then
+                echo "Please provide file name and PET ACQ Host name"
+                return  0
+                fi
+
+                scp ${1}  ${USER_CT}@${2}:/usr/g/ctuser/
+}
+__export_ssh_pub_key()
+{
+    echo "export (and optionally create) public key to machine for SSH access"
+        echo "Note. A target system may have SSH configured not to allow certificate based auth. In this case use sshpass"
+        if [ $# -lt 2 ]
+            then
+                echo "please provide username and host name/ip "
+                return 1
+                fi
+
+
+                if [ -f ~/.ssh/id_rsa.pub ]
+                    then
+                        echo "public key file , ~/.ssh/id_rsa.pub, already exists. note. private key is ~/.ssh/id_rsa"
+                else 
+                    echo "generating public key file  ~/.ssh/id_rsa.pub   "
+                        ssh-keygen -t rsa
+                        fi
+
+                        echo "create .ssh dir on host"
+                        ssh $1@$2 mkdir -p .ssh
+                        echo "export RSA public key to machiine $2 for user $1"
+                        cat ~/.ssh/id_rsa.pub | ssh $1@$2 'cat >> .ssh/authorized_keys'
+                        echo "Set .ssh permissions to 700"
+                        ssh $1@$2 chmod 700 .ssh
+
+
+}
+
+__search_in_files()
+{
+    echo "executing: find . -type f -print0 | xargs -0 grep -s $1"
+        find . -type f -print0 | xargs -0 grep -s "$1"
+}
+
+__move_recents_from_downloads()
+{
+    mins=60
+        if [[ ! -z "$1" ]] 
+#if [ $# -eq 1 ] 
+            then
+                echo "will move all recent files (last $1 minutes) from Downloads"
+                mins="$1"
+                fi
+                for f in $(find ~/Downloads/ -mmin -${mins} -type f ); do mv $f .; done
+#for f in $(find ~/Downloads/ -mmin -${mins} -type f ); do echo "mv $f ." ; done
+}
+
+alias mvFromDls='__move_recents_from_downloads'
+
+#Alias to extract rpm
+_extract_rpm(){
+
+#Description: 
+#Usage: $ extract_rpm source_file [target_dir]
+#Author Yosi Izaq
+    echo "This alias will extract content of rpm, it can receive an optional parameter for target dir"
+
+        rpm=""
+        dir=""
+        s_dir=""
+
+        if  [ $# -eq 1 ] 
+            then
+                echo "Extracting $1 to current dir `pwd`"
+                dir=$( pwd )
+                elif [ $# -eq 2 ] 
+                then
+                echo "Extracting $1 to dir $2"
+                dir="$2"
+                s_dir=$( pwd )
+        else
+            echo "Usage: extract_rpm <rpm> [target dir]"
+                return 1
+                fi  
+# set RPM param according to relative or absolute path was given
+                if [[ "$1" = /* ]]
+                                then
+#   : # Absolute path
+rpm="$1"
+else
+# : # Relative path
+rpm="${s_dir}/${rpm}"
+fi
+
+echo "Extracting rpm $rpm to $dir"
+cd $dir || ( echo "can't cd to $dir, bailing out" && return -2 )
+echo " rpm2cpio < ${rpm} | cpio -i --make-directories "
+rpm2cpio < "${rpm}" | cpio -i --make-directories
+
+}
+_fire_nvim_edit_session(){
+
+
+  if [ -n $1 -a $1 == "-t" ]
+  then
+  echo "using NVIM"
+  shift #shift the -t out of argument (file) list
+  nvi $@
+  else
+  echo "using GUI VIM to launch $@"
+  mvim  "$@"
+  fi
+}
+
+#Utility bash mini functions of common tasks
+#
+# This one will accept a list of files to edit.
+# If the first parameter is -t then console VIM will be used. Otherwise GVIM will be launched.
+#not zsh compatible
+_fire_vim_edit_session(){
+
+if [ -n $1 ] ; then
+    if [ $1 == "-t" ] ; then
+        echo "using VIM"
+        shift #shift the -t out of argument (file) list
+        vim $@
+    elif [ $1 == "-n" ] ; then
+        echo "using NVIM"
+        shift #shift the -t out of argument (file) list
+        nvi $@
+    elif [ $1 == "-g" ] ; then
+        echo "using MAC GUI VIM to launch $@"
+        shift #shift the -t out of argument (file) list
+        mvim  "$@"
+    elif [ $1 == "-v" ] ; then
+        echo "using NVIM GUI vv"
+        shift #shift the -t out of argument (file) list
+        vv $@
+    else 
+        echo "Please provide valid flag, -g for mac gui vim,  -t for terminal vim, -n for nvim"
+    fi
+fi
+
+}
+#
+
+#Bash functions I usually alias and use commonly
+#__find_cpp()
+#{
+#find . \( -name "*.[ch]" -o -name "*.cpp" -o -name "*.hpp" \) 
+#}
+
+_generate_code_review_info()
+{
+echo "Generating code review information"
+echo "Make sure you're in corresponding stream and view and set to the activity you'd like reviewed"
+
+stream=`ct lsstream | awk '{print $2}'`
+view=`ct pwv |  awk '/Set view/  {print $3}'`
+activity=`ct lsact -cact | awk '{print $2}'`
+
+Files=`ct lsact -long ${activity}@/vob/nmtgre_proj | awk '/@@/ {print $1 } ' | sed -e 's_@@.*$__'`
+
+echo "================================================================================"
+echo "||            Code Review Information, optimized for windows view             "
+echo "================================================================================"
+echo "|| Stream:    $stream                   "
+echo "================================================================================"
+echo "|| View:      $view                   "
+echo "================================================================================"
+echo "|| Activity:  $activity                 "
+                    echo "================================================================================"
+                        echo "|| Files:     $Files                 "
+                        echo "================================================================================"
+
+
+                        echo
+                        echo
+                        echo
+                        echo
+
+                        RULER="=================================================================================================================================="
+                        Files_array=(`ct lsact -long ${activity}@/vob/nmtgre_proj | awk '/@@/ {print $1 } ' | sed -e 's_@@.*$__' | sort | uniq   `)
+
+                        printf "%-130s" $RULER
+                        echo
+                        printf "%-10s%-110s%10s" "||" "Code Review Information. Optimized for Linux View" "||"
+                        echo
+                        printf "%-130s" $RULER
+                        echo
+                        printf "%-10s%-110s%10s" "||" "Stream $stream" "||"
+                        echo
+                        printf "%-130s" $RULER
+                        echo
+                        printf "%-10s%-110s%10s" "||" "View $view" "||"
+                        echo 
+                        printf "%-130s" $RULER
+                        echo
+                        printf "%-10s%-110s%10s" "||" "Activity $activity" "||"
+                        echo 
+                        printf "%-130s" $RULER
+                        echo
+                        printf "%-10s%-110s%10s" "||" "View $view" "||"
+                        echo
+                        printf "%-130s" $RULER
+                        echo
+                        printf "%-10s%-110s%10s" "||" "Files: " "||"
+                        echo
+
+                        for file in ${Files_array[@]} 
+    do
+        printf "%-10s%-110s%10s" "||" "$file" "||"
+            echo
+            done
+
+            printf "%-130s" $RULER
+            echo
+}
+
+# Variabls
+_VIM_FONT=' -font Sans\ 12 '
+#_VIM_FONT=' -font Courier\ Bold\ 13 '
+#FUNCTIONS
+
+_cpuz(){
+
+#Description: This alias will copy and uncopmress a given zip file to a given target file
+# The result is much faster than running cp first and gzunzip later.
+#Usage: $ cpuz source_file target_file
+#Author Yosi Izaq
+    echo "This alias will copy and uncopmress a given zip file to a given target file"
+
+
+        if  [ $# -ne 2 ] 
+            then
+                echo "Usage: $ cpuz source_file target_file"
+        else
+            echo "copying and decompressing $1 to $2"
+                zcat $1 > $2
+                fi  
+
+}
+
+_cpz(){
+
+#Description: This alias will copy the given file to a compressed file on a given location using pipes
+# The result is much faster than running cp first and gzip later.
+#Usage: $ cpz source_file target_file.gz
+#Author Yosi Izaq
+    echo "This alias will copy the given file to a compressed file on a given location using pipes"
+
+
+        if  [ $# -ne 2 ] 
+            then
+                echo "Usage: $ cpz source_file target_file.gz"
+        else
+            echo "copying and compressing $1 to $2"
+                cat $1 | gzip > $2
+                fi  
+
+}
+
+_cpr_fast(){
+
+#Description: This alias copied directories much faster than cp -r
+#Usage: $ cpr_fast source target
+#Author Yosi Izaq
+    echo "This alias copies directories much faster than cp -r"
+
+
+        if  [ $# -ne 2 ] 
+            then
+                echo "Usage: $ cpr_fast source target"
+        else
+            echo "copying $1 to $2"
+                ( cd $1  && tar cf - . ) | (cd $2  && tar xvpf - ) 
+                fi  
+
+}
+
+_pull_file_ssh(){
+#Description: SSH copy file from remote host
+#Usage pull_file_ssh <remote file> <remote host> <local file>
+#Author Yosi Izaq
+
+    echo "SSH copy file from remote host"
+
+
+        if  [ $# -lt 3 ]
+            then
+                echo "Usage pull_file_ssh \<remote file\> \<remote host\> \<local file\> [remote user]"
+                echo "Note that [remote user] is optional, use it if local user is different than remote user"
+        else
+            if [ -n "$4" ]
+                then
+                    USR="$4"
+                    echo "Remote user is $USR"
+            else
+                USR=$(whoami)
+                    echo "Using local user $USR"
+                    fi
+                    echo "copying $1 to $3 from machine $2, using remote user $4"
+                    ssh -l $USR $2  cat $1 > $3
+                    fi
+
+}
+_push_file_ssh(){
+#Description: SSH move file to remote host
+#Usage: push_file_ssh <local file> <remote host> <remote file> [remote user]
+#Author Yosi Izaq
+
+    echo "SSH move file to remote host"
+        echo "Usage push_file_ssh \<local file\> \<remote host\> \<remote file\> [remote user]"
+        echo "Note that [remote user] is optional, use it if local user is different than remote user"
+
+        USR=""
+
+        if  [ $# -lt 3 ]
+            then
+                echo "Usage push_file_ssh \<local file\> \<remote host\> \<remote file\> [remote user]"
+                echo "Note that [remote user] is optional, use it if local user is different than remote user"
+        else
+            if [ -n "$4" ]
+                then
+                    USR="$4"
+                    echo "Remote user is $USR"
+            else
+                USR=$(whoami)
+                    echo "Using local user $USR"
+                    fi
+
+                    echo "copying $1 to $3 on machine $2, using remote user $4"
+                    echo "Execute: cat $1 | ssh -l $USR $2  cat \">\" $3"
+                    cat $1 | ssh -l $USR $2  cat ">" $3
+                    fi
+
+}
+
+
+_ls_exe(){
+#Description: list executable files only
+#Usage: $ ls_exe
+#Author Yosi Izaq
+    ls -lrt | awk ' $1 ~ /x/&& $1 !~ /^d/ {print $9 " " $10}'
+}
+
+_ls_dir() {
+#Description: list directory files only
+#Usage: $ ls_exe
+#Author Yosi Izaq
+    ls -lrt | awk ' $1 ~ /^d/ {print $9 " " $10}'
+}
+
+_ls_file() {
+#Description: list files only
+#Usage: $ ls_exe
+#Author Yosi Izaq
+    ls -lrt | awk ' $1 !~ /^d/ {print $9 " " $10}'
+}
+
+_tocifyKB(){
+    cd /Users/yizaq/Work/KB/;
+
+#bash array syntax 
+    declare -a kb_set 
+        kb_set=(`find . -iname '*kb*'`)
+        echo "Adding TOC to all files listed: ${kb_set[@]}"
+        tocify.pl ${kb_set[@]}
+}
+
+_browse_cc_change_set(){
+    echo "make sure you change directory to ACS clearcase view"
+        for file in `ct lsactivity -long -me | grep ismg_israel_acs | awk -F"@" '{print $1 }' | sed -e 's/\w:\\\ismg_israel_acs\\\Acs/./' |  sed -e 's_\\\_/_g' | sort | uniq `;
+    do echo $file;
+    ct lsvtree -g $file;
+    done
+}
+
+
+_mac_backup(){
+    banner -w 50 "Initiating MAC backup for $(whoami) " 
+        echo "------------------------------------------------"
+        echo "Starting backup of knwoledge base, scripts and daily context files, for MAC env..."
+        echo "------------------------------------------------"
+
+        back_path="/Users/yizaq/backups"
+
+        cdwork_mac
+        echo "------------------------------------------------"
+        echo "backup KB, context files and scripts"
+        echo "------------------------------------------------"
+        tar cvf $back_path/` date| awk '{print "backup_"$3"_"$2"_"$6}'`.tar  KB/ context* scripts 
+        echo "------------------------------------------------"
+        echo "backup ToDo list, development process notes, drafts and project related KBs"
+        echo "------------------------------------------------"
+#ACS files, not in use anymore
+#tar rvf $back_path/` date| awk '{print "backup_"$3"_"$2"_"$6}'`.tar  acs/5.0/AAC/AAC_DEV_Draft acs/5.0/AD/ADClientPlan acs/5.0/AD/MAR_Plan acs/5.0/Kerberos/KerberosPlan  acs/5.0/PKI/clr_task_plan acs/5.1/CoA/CoA_Plan acs/5.1/FIPS/FIPS_KB 
+        tar rvf $back_path/` date| awk '{print "backup_"$3"_"$2"_"$6}'`.tar  ISE/PBIS/PBIS_notes ./work_back/pass.cpt
+
+        echo "------------------------------------------------"
+        echo "backup aliases bashrc pythonrc vimrc and vim"
+        echo "------------------------------------------------"
+        cd ~
+        tar rvf $back_path/` date| awk '{print "backup_"$3"_"$2"_"$6}'`.tar  .aliases .bashrc .pythonrc .vimrc .bash_history .python_history .journal/yosi_izaq_journal* .vim/
+
+#echo "------------------------------------------------"
+#	echo "backup files from desktop: bookmars and notes"
+#	echo "------------------------------------------------"
+#	cd /cygdrive/c/Documents\ and\ Settings/yizaq/Desktop/
+#	tar rvf $back_path/` date| awk '{print "backup_"$3"_"$2"_"$6}'`.tar  FFbookmarks.html Chrombookmarks.html
+
+
+        date_str=$( date +"%d_%m%y" )
+        backup_fname="yosi_backup_${date}"
+        echo "------------------------------------------------"
+        echo "date is $date"
+        echo "Compressing to ${backup_fname} ..."
+        echo "------------------------------------------------"
+        bzip2 -f $back_path/${backup_fname}.tar
+        echo "------------------------------------------------"
+        echo "Backup complete! have a nice day :\) "
+        echo "------------------------------------------------"
+}
+
+_win_backup(){
+    echo "------------------------------------------------"
+        echo "Starting backup of knwoledge base, vim files, scripts and daily context files..."
+        echo "------------------------------------------------"
+
+        back_path="/cygdrive/c/TEMP/backups"
+
+        cdwork
+        date_str=$( date +"%d_%m_%y" )
+        backup_fname="yosi_backup_${date_str}"
+        backup_file="$back_path/${backup_fname}.tar"
+        echo "------------------------------------------------"
+        echo "date is $date_str"
+        echo "Compressing to ${backup_fname} ..."
+        echo "------------------------------------------------"
+        echo "------------------------------------------------"
+        echo "backup KB, context files and scripts"
+        echo "------------------------------------------------"
+        sleep 3
+        tar cvf $backup_file  KB/ context* scripts code PET/DevHomeDir/.aliases PET/TestEnv/yosi/.bashrc PET/TestEnv/yosi/.aliases PET/TestEnv/yosi/.vimrc PET/TestEnv/yosi/.screenrc PET/TestEnv/yosi/*.sh PET/TestEnv/yosi/*.py PET/DevHomeDir/.bashrc PET/DevHomeDir/.vimrc  PET/DevHomeDir/.screenrc  PET/DevHomeDir/.bash_history  
+#tar cvf $back_path/` date| awk '{print "backup_"$3"_"$2"_"$6}'`.tar  KB/ context* scripts 
+echo "------------------------------------------------"
+#	echo "backup ToDo list, development process notes, drafts and project related KBs"
+#	echo "------------------------------------------------"
+#	tar rvf $back_path/` date| awk '{print "backup_"$3"_"$2"_"$6}'`.tar  acs/5.0/AAC/AAC_DEV_Draft acs/5.0/AD/ADClientPlan acs/5.0/AD/MAR_Plan acs/5.0/Kerberos/KerberosPlan  acs/5.0/PKI/clr_task_plan acs/5.1/CoA/CoA_Plan acs/5.1/FIPS/FIPS_KB 
+
+echo "------------------------------------------------"
+echo "backup cygwin aliases bashrc pythonrc vimrc and vim"
+echo "------------------------------------------------"
+sleep 3
+cd ~/cygwin_back
+cp ~/.aliases ~/.bashrc ~/.pythonrc ~/.vimrc ~/.bash_history ~/.python_history ~/pass* . 
+cd ~
+echo "current path $( pwd ) , backup file: $backup_file"
+tar rvf $backup_file  ./cygwin_back/
+#tar rvf $back_path/` date| awk '{print "backup_"$3"_"$2"_"$6}'`.tar  .aliases .bashrc .pythonrc .vimrc .bash_history .python_history .journal/yosi_izaq_journal .vim/
+#tar rvf $back_path/` date| awk '{print "backup_"$3"_"$2"_"$6}'`.tar  .aliases .bashrc .pythonrc .vimrc .bash_history .python_history .journal/yosi_izaq_journal .vim/
+
+echo "------------------------------------------------"
+echo "backup cygwin vim RT folders \(plugins\)"
+echo "------------------------------------------------"
+sleep 3
+cd ~/cyg_vim_rt_back
+cp -r ${MY_VIM_CYGWIN_RT_PATH}/autoload/ ${MY_VIM_CYGWIN_RT_PATH}/bundle/ ${MY_VIM_CYGWIN_RT_PATH}/colors/  .
+cd ~
+tar rvf $backup_file  ./cyg_vim_rt_back  
+
+echo "------------------------------------------------"
+echo "backup windows vim files"
+echo "------------------------------------------------"
+sleep 3
+cd ~/vim_win_back
+cp -r ${MY_VIM_WIN_PATH}/vimfiles/autoload/ ${MY_VIM_WIN_PATH}/vimfiles/bundle/ ${MY_VIM_WIN_PATH}/vim80/colors/  ${MY_VIM_WIN_PATH}/_vimrc  ${MY_VIM_WIN_PATH}/EngWords  .
+cd ~
+tar rvf $backup_file  ./vim_win_back  
+
+#ToDo, backup bundles colors from MY_VIM_CYGWIN_RT_PATH 
+#also backup _vimrc bundles colors from MY_VIM_CYGWIN_RT_PATH  
+#
+echo "------------------------------------------------"
+echo "Compressing..."
+echo "------------------------------------------------"
+bzip2 -f $backup_file  
+echo "------------------------------------------------"
+echo "backup file: ${backup_file}.bz2, size: $( ls -lh ${backup_file}.bz2 | awk '{print $6}' )"  
+echo "Backup complete! have a nice day :\) "
+echo "------------------------------------------------"
+}
+
+_kill_proc(){
+echo "freeing process $1"
+proc_pid=`ps -ef | grep "$1" | grep -v grep | awk '{print $2}' `
+echo "freeing  processes $proc_pid. if theres such process please ignore the error message."
+kill -9 $proc_pid
+}
+
+_pse(){
+ps -ef  | grep `whoami` | grep "$1" | grep -v grep
+}
+
+_historygrp(){
+history | grep "$1"
+}
+
+_aliasgrp(){
+grep "$1" ~/.aliases
+}
+
+_locate_in_jar (){
+#for jar in *.jar;  do echo  searching $jar; jar tvf $jar | grep "$1"; done
+        for jar in *.jar;  
+    do  jar tvf $jar | grep "$1"; 
+    if [ $? = 0 ]  ;
+    then
+        echo "found $1 in $jar."
+        fi
+        done
+}
+
+_open_KB_files(){
+
+#Cisco KB
+#files=( knowledge_base_unix  clear_case_KB.txt bash/KB_bash  vi/KB_vi kb_scripts javaKB kb_cisco kb_tools KB_cpp python/KB_python sed/KB_sed awk/kb_awk  win/KB_windows win/KB_dot_net Network/sslKB KB_sql /perl/KB_perl /Algorithms/AlgorithmsKB C_KB Network/ACE/aceKB Network/NetworkKB linux/KB_Linux kb_security kb_ed generalKB iPhoneKB ISE/kb_ISE ISE/kb_ISE_CS kb_vmware kb_mac )
+
+#GE KB
+#files=( eclipse_kb kb_cygwin knowledge_base_unix  clear_case_KB.txt bash/KB_bash  vi/KB_vi kb_scripts javaKB kb_tools KB_cpp python/KB_python sed/KB_sed awk/kb_awk  win/KB_windows win/KB_dot_net Network/sslKB KB_sql perl/KB_perl Algorithms/AlgorithmsKB C_KB Network/ACE/aceKB Network/NetworkKB linux/KB_Linux kb_security kb_ed generalKB iPhoneKB kb_vmware GE_KB GE_PET_KB Ergonomics_KB)
+
+#SAP KB
+    files=( sap_cf_kb SAP_KB nestjs_kb nodejsKB kb_MQ kb_DB Intellij_KB eclipse_kb kb_cygwin knowledge_base_unix  SCM_KB.txt bash/KB_bash  vi/KB_vi kb_scripts javascriptKB javaKB kb_tools KB_cpp python/KB_python sed/KB_sed awk/kb_awk  win/KB_windows win/KB_dot_net Network/sslKB KB_sql perl/KB_perl Algorithms/AlgorithmsKB C_KB Network/ACE/aceKB Network/NetworkKB linux/KB_Linux kb_security kb_ed generalKB iPhoneKB kb_vmware Ergonomics_KB kb_mac rust_KB kb_chrome go_bk containers_kb ML_kb leetcodeKB kb_system_design)
+
+        path="${MY_WORK_PATH}/KB/"
+        echo "KB path: $path"
+        cmd=" "
+
+        for file in ${files[@]};
+    do file=${path}${file};
+    cmd="${cmd}"" ""${file}"
+#echo $file;
+#echo $cmd;
+        done
+#echo "File list: $cmd"
+#gvim ${_VIM_FONT} ${cmd}
+
+# If the first parameter is -t then console VIM will be used. Otherwise GVIM will be launched.
+        _fire_vim_edit_session $1 ${cmd}
+#gvim -font Sans\ 12 ${cmd}
+}
+
+_list_checkouts() {
+    echo "Please wait while generating list of checked out files.";
+# Caveage, replaced with new cleartool command :)
+#find . \( -name "*.[ch]" -o -name "*.cpp" -o -name "*.hpp" \)  -exec  cleartool ls '{}' \; | grep CHECKEDOUT | awk -F@ '{print $1}'
+    ct lsco -r -me;
+}
+
+_resume_editing_session(){
+    echo "Resuming editing session on files: "
+        echo "work path = ${WORK_PATH}"
+        cat $1
+        file="$1"
+        arg1="$2"
+
+        files=$( ${WORK_PATH}/scripts/python/util/flatten_file_lines.py $file )
+
+        echo "flattened files are: ${files[*]} "
+        _fire_vim_edit_session $arg1 ${files}
+
+#	if [ -n $arg1 -a $arg1 == "-t" ]
+#	then
+#		echo "using vim"
+#		vim -- $files
+#	else
+#		echo "using gvim"
+##gvim -font Courier\ Bold\ 13 $files
+#		gvim -font Sans\ 12 ${files}
+#	fi
+
+}
+
+_gen_daily_context_content() {
+# expects content filename as argument
+        file="$1"
+#Enter all days
+        LIMIT=31
+        for ((i=1; i <= LIMIT ; i++)) 
+            do 
+                echo  "$i" >> $file
+                    echo  "" >> $file
+                    echo  "      -> Daily" >> $file
+                    echo  "" >> $file
+                    echo  "      -> By EoD Tasks" >> $file
+                    echo  "" >> $file
+                    echo  "      -> Ongoing Tasks" >> $file
+                    echo  "" >> $file
+                    echo  "      ->" >> $file
+                    echo  "" >> $file
+                    echo  "      ->" >> $file
+                    echo  "" >> $file
+                    echo  "      ->" >> $file
+                    echo  "" >> $file
+                    echo  "      ->" >> $file
+                    echo  "" >> $file
+                    done
+}
+
+_open_current_context_n (){
+
+    echo "work path ${MY_WORK_PATH}"
+    ctxt_path="${MY_WORK_PATH}/context/"
+
+
+    file="${ctxt_path}context_"$(date +%b_%Y)
+    day=$(date +%d)
+    if  [ -e $file ] 
+      then
+        echo "Context file exists"
+    else
+      echo "Creating new context file $file"
+        touch  $file
+
+        echo "This file contains work related notes for Yosi Izaq, yosi.izaq@sap.com" >> $file
+        echo "File name: $file" >> $file
+        _gen_daily_context_content $file
+    fi
+
+
+              echo "Opening $file for edit..."
+#gvim -font Courier\ Bold\ 13 $file
+# If the first parameter is -t then console VIM will be used. Otherwise GVIM will be launched.
+              _fire_nvim_edit_session $1 ${file} 
+#gvim -font Sans\ 12 ${file}
+
+}
+
+_open_current_context(){
+#month=` date | awk '{print $2}'`
+#	year=` date | awk '{print $6}'`
+##echo "year $year, month $month"
+
+    echo "work path ${MY_WORK_PATH}"
+        ctxt_path="${MY_WORK_PATH}/context/"
+
+#file="${ctxt_path}context_${month}_${year}" 
+
+#More elegant than awking for month and year. use () for spawning shell command. Run date with format of month_year
+        file="${ctxt_path}context_"$(date +%b_%Y)
+        day=$(date +%d)
+        if  [ -e $file ] 
+            then
+                echo "Context file exists"
+        else
+            echo "Creating new context file $file"
+                touch  $file
+
+                echo "This file contains work related notes for Yosi Izaq, yosi.izaq@sap.com" >> $file
+                echo "File name: $file" >> $file
+
+                _gen_daily_context_content $file
+                fi
+
+                echo "Opening $file for edit..."
+#gvim -font Courier\ Bold\ 13 $file
+# If the first parameter is -t then console VIM will be used. Otherwise GVIM will be launched.
+                _fire_vim_edit_session $1 ${file} 
+#gvim -font Sans\ 12 ${file}
+}
+
+_open_current_context_piano(){
+
+    ctxt_path="$HOME/"	
+
+#More elegant than awking for month and year. use () for spawning shell command. Run date with format of month_year
+        file="${ctxt_path}piano_practice_"$(date +%b_%Y).txt
+        day=$(date +%d)
+        if  [ -e $file ] 
+            then
+                echo "Piano practice file exists"
+        else
+            echo "Creating new Piano practice file $file"
+                touch  $file
+
+                echo "This file contains piano practice of Yosi Izaq, izaqyos@gmail.com" >> $file
+                echo "File name: $file" >> $file
+
+#Enter all days
+                LIMIT=31
+                for ((i=1; i <= LIMIT ; i++)) 
+                    do 
+                        echo  "" >> $file
+                            echo  "################################################################################" >> $file
+                            echo  "$i" >> $file
+                            echo  "" >> $file
+                            echo  "################################################################################" >> $file
+                            echo  "" >> $file
+                            done
+                            fi
+
+                            echo "Opening $file for edit..."
+                            _fire_vim_edit_session $1 ${file} +/"^${day}"
+}
+
+rolling_banner(){
+    msg=(Welcome Yosi $USER)
+        for word in ${msg[@]} ; do banner -w 30 $word; echo ""; echo ""; sleep 1; done
+}
+
+
+_mini_start(){
+    alias banner="/cygdrive/c/Users/212680136/Desktop/Yosi/Work/scripts/bash/banner.sh"
+        banner "Welcome Yosi :\)"
+        banner "`whoami`"	
+        echo "date is:"
+        banner "`date`"	
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        echo "Firing up some xterms..."
+        xts
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        echo "Firing up knowledge base and context files"
+        _open_current_context;
+    _open_KB_files
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        banner "ENJOY :-\)"
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+}
+
+_start(){
+    echo "aliasing banner"
+        alias banner="/cygdrive/c/Users/212680136/Desktop/Yosi/Work/scripts/bash/banner.sh"
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        banner "Welcome Yosi :\)"
+        banner "`whoami | awk '{print toupper($1) }'`"	
+        echo "date is:"
+        banner "`date`"	
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        echo "Firing up some xterms..."
+#xts_small
+        xts_solarized
+
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        echo "backuping files..."
+        backup
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        echo "Firing up knowledge base and context files"
+        _open_current_context;
+    _open_KB_files
+
+        banner "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        banner "ENJOY :-\)"
+
+}
+
+#general
+alias dir='ls -lav --color=auto'
+alias DIR='ls -F | grep "/"'
+alias lst='ls -lrt'
+alias lstd='ls -lrt ~/Downloads'
+alias cdd='cd  ~/Downloads'
+alias lstdoc='ls -lrt ~/Documents'
+alias cddoc='cd  ~/Documents'
+alias pse="_pse " 
+alias greph="_historygrp"
+alias grepa="_aliasgrp"
+
+#xterm related
+####################################################################################################
+#Note. for solarized to work need to overwrite ~/.Xresources w/
+#
+##define S_base03        #002b36
+##define S_base02        #073642
+##define S_base01        #586e75
+##define S_base00        #657b83
+##define S_base0         #839496
+##define S_base1         #93a1a1
+##define S_base2         #eee8d5
+##define S_base3         #fdf6e3
+#
+#*background:            S_base03
+#*foreground:            S_base0
+#*fadeColor:             S_base03
+#*cursorColor:           S_base1
+#*pointerColorBackground:S_base01
+#*pointerColorForeground:S_base1
+#
+##define S_yellow        #b58900
+##define S_orange        #cb4b16
+##define S_red           #dc322f
+##define S_magenta       #d33682
+##define S_violet        #6c71c4
+##define S_blue          #268bd2
+##define S_cyan          #2aa198
+##define S_green         #859900
+#
+#!! black dark/light
+#*color0:                S_base02
+#*color8:                S_base03
+#
+#!! red dark/light
+#*color1:                S_red
+#*color9:                S_orange
+#
+#!! green dark/light
+#*color2:                S_green
+#*color10:               S_base01
+#
+#!! yellow dark/light
+#*color3:                S_yellow
+#*color11:               S_base00
+#
+#!! blue dark/light
+#*color4:                S_blue
+#*color12:               S_base0
+#
+#!! magenta dark/light
+#*color5:                S_magenta
+#*color13:               S_violet
+#
+#!! cyan dark/light
+#*color6:                S_cyan
+#*color14:               S_base1
+#
+#!! white dark/light
+#*color7:                S_base2
+#*color15:               S_base3
+####################################################################################################
+alias xtBigFon='xterm -fn "*-fixed-*-*-*-20-*"'
+alias xts_solarized=' xtBigFon & xtBigFon & xtBigFon & xtBigFon & xtBigFon & xtBigFon &' 
+####################################################################################################
+alias xtloc1='xterm -font -*-fixed-medium-r-*-*-20-*-*-*-*-*-iso8859-*  -geometry 97x25+0+0 -sb -bg darkblue -fg coral'
+alias xtloc2='xterm -font -*-fixed-medium-r-*-*-20-*-*-*-*-*-iso8859-*  -geometry 97x25+0+550 -sb -bg darkcyan -fg navajowhite '
+alias xtloc3='xterm -font -*-fixed-medium-r-*-*-20-*-*-*-*-*-iso8859-*  -geometry 97x25+1000+0 -sb -bg darkslategray -fg peachpuff'
+alias xtloc4='xterm -font -*-fixed-medium-r-*-*-20-*-*-*-*-*-iso8859-*  -geometry 97x25+1000+550 -sb -bg slategrey -fg webpurple' 
+alias xts_loc='xtloc1 & xtloc2 & xtloc3 & xtloc4 &' 
+
+alias xt1='xterm -font -*-fixed-medium-r-*-*-20-*-*-*-*-*-iso8859-*  -geometry 70x24 -sb -bg darkblue -fg coral '
+alias xt2='xterm -font -*-fixed-medium-r-*-*-20-*-*-*-*-*-iso8859-*  -geometry 70x24 -sb -bg darkcyan -fg navajowhite '
+alias xt3='xterm -font -*-fixed-medium-r-*-*-20-*-*-*-*-*-iso8859-*  -geometry 70x24 -sb -bg darkslategray -fg peachpuff'
+alias xt4='xterm -font -*-fixed-medium-r-*-*-20-*-*-*-*-*-iso8859-*  -geometry 70x24 -sb -bg slategrey -fg webpurple' 
+alias xts="xt1& xt4& xt3& xt4&"
+alias xt1_small='xterm -font -*-fixed-bold-r-*-*-12-*-*-*-*-*-iso8859-*  -geometry 140x48 -sb -bg darkblue -fg coral'
+alias xt2_small='xterm -font -*-fixed-bold-r-*-*-12-*-*-*-*-*-iso8859-*  -geometry 140x48 -sb -bg darkcyan  -fg navajowhite'
+alias xt3_small='xterm -font -*-fixed-bold-r-*-*-12-*-*-*-*-*-iso8859-*  -geometry 140x48 -sb -bg darkslategray  -fg peachpuff'
+alias xt4_small='xterm -font -*-fixed-bold-r-*-*-12-*-*-*-*-*-iso8859-*  -geometry 140x48 -sb -bg slategrey  -fg webpurple' 
+
+alias xts_small="xt1_small& xt2_small& xt3_small& xt4_small&"
+
+#jboss
+alias jboss_start='/cygdrive/c/Program\ Files/jboss-4.0.2/bin/run.bat'
+alias jboss_stop='/cygdrive/c/Program\ Files/jboss-4.0.2/bin/shutdown.bat -S'
+alias cdjboss="cd /cygdrive/c/Program\ Files/jboss-4.0.2/server/default/"
+
+#tomcat
+alias tomcat_start="cdtomcat; cd ./bin; ./startup.bat; cd -"
+alias tomcat_stop="cdtomcat; cd ./bin; ./shutdown.bat; cd -"
+alias tomcat_restart="tomcat_stop; sleep 5; tomcat_start"
+
+#system
+alias pse='ps -ef | grep `whoami`'
+alias ipconfig='/cygdrive/c/WINDOWS/system32/ipconfig.exe'
+alias refresh_DNS='sudo /etc/rc.d/init.d/nscd restart '
+
+#personal
+alias open_journal='echo open private journal, please type password.; cd /cygdrive/c/Documents\ and\ Settings/yytzhak/.journal ; ccrypt -d yosi_izaq_journal.cpt; vi yosi_izaq_journal; cd - '
+alias close_journal='echo closing private journal, please type password; cd /cygdrive/c/Documents\ and\ Settings/yytzhak/.journal ; ccrypt -e yosi_izaq_journal; echo terminating journal editing session; cd -'
+alias journal="open_journal ; close_journal"
+
+alias open_pass='echo open private passwords file; cd ~;  if [ -f pass.cpt ] ; then  ccrypt -d pass.cpt ; fi ; if [ -f pass ] ; then vi pass ; else echo password store file is not present!!! ; fi ; cd - '
+alias close_pass='echo closing private passwords file, please type password; cd ~; ccrypt -e pass; echo terminating passwords editing session; cd -'
+alias pass="open_pass ; close_pass"
+
+#work
+#Put here things that are very commonly used.
+#alias backup='_mac_backup'
+alias backup='_win_backup'
+alias browse_cc_change_set='_browse_cc_change_set'
+alias start='_start'
+alias mini_start='_mini_start'
+
+#alias gen_tags='echo generating cpp tags;ctags -R --c++-kinds=+p --fields=+iaS --extra=+q  --languages=c++  -f tags . ; sort -u -o LC_ALL='C' tags tags'
+# note, to resolve error sort: string comparison failed: Invalid or incomplete multibyte or wide character must perform:
+# export  LC_ALL='C'
+alias gen_tags='echo generating all languages tags;if [ -f tags ] ; then rm tags; fi ; LC_ALL='C'; ctags -R --c++-kinds=+p --fields=+iaS --extra=+q  -f tags . ; sort -u -o tags tags'
+alias gen_tags_java='echo generating java tags;ctags -R --fields=+iaS --extra=+q  --languages=java  -f tags . ; sort -u -o tags tags'
+alias gen_tags_python='echo generating python tags; ctags -R --exclude=__pycache__ --fields=+l --languages=python -f tags .; sort -u -o tags tags'
+alias gen_tags_javascript="echo generating javascript tags;ctags -R src test && sed -i '' -E '/^(if|switch|function|module\.exports|it|describe).+language:js$/d' tags; sort -u -o tags tags"
+alias gen_tags_typescript="echo generating javascript tags;ctags -R --languages=typescript src test ; sort -u -o tags tags"
+alias gen_fscope='find . \( -name "*.[chCH]" -o -name "*.cpp" -o -name "*.hpp" -o "*.java" \) > freescope.files'
+alias gen_scope='find . \( -name "*.[chCH]" -o -name "*.cc" -o -name "*.cpp" -o -name "*.hpp" -o -name "*.hxx" \) > cscope.files; cscope -b -i cscope.files '
+alias update_tags_to_vim='echo updating tags to VIM path, make sure to manually create tags or run alias gen_tags before!;mv tags ~/.vim/tags/;ln -s ~/.vim/tags/tags/tags'
+alias gen_src_db=' echo genrating cscope symbols DB; gen_scope ; gen_tags ; update_tags_to_vim '
+
+## for Cisco ISE PRRT
+#alias update_tags_to_vim_1box='echo updating 1box tags to VIM path, make sure to manually create tags or run alias gen_tags before!;mv tags ~/.vim/tags/1box;ln -s ~/.vim/tags/1box/tags tags'
+#alias gen_src_db_1box=' gen_scope ; gen_tags ; update_tags_to_vim_1box; sort -u -o  ~/.vim/tags/1box/tags ~/.vim/tags/1box/tags'
+## for Cisco ISE PBIS
+#alias update_tags_to_vim_pbis='echo updating PBIS tags to VIM path, make sure to manually create tags or run alias gen_tags before!;mv tags ~/.vim/tags/pbis;ln -s ~/.vim/tags/pbis/tags tags'
+#alias gen_src_db_pbis=' gen_scope ; gen_tags ; update_tags_to_vim_pbis; sort -u -o  ~/.vim/tags/pbis/tags ~/.vim/tags/pbis/tags'
+## for Cisco ISE 
+#alias update_tags_to_vim_ise='echo updating ISE RT tags to VIM path, make sure to manually create tags or run alias gen_tags before!;mv tags ~/.vim/tags/ise;ln -s ~/.vim/tags/ise/tags tags'
+#alias gen_src_db_ise=' gen_scope_java ; gen_tags ; update_tags_to_vim_ise; sort -u -o  ~/.vim/tags/ise/tags ~/.vim/tags/ise/tags'
+alias gen_scope_java='echo generating cscope symbol DB for Java, C and C++ ; find . \( -name "*.java" -o -name "*.[chCH]" -o -name "*.cpp" -o -name "*.hpp" \) > cscope.files; cscope -b -i cscope.files '
+# for GE PAC
+alias update_tags_to_vim_PAC='echo updating PAC tags to VIM path, make sure to manually create tags or run alias gen_tags before!;mv tags ~/vim_tags/PAC/tags;ln -s ~/vim_tags/PAC/tags tags'
+alias gen_src_db_pac=' echo generating cscope DB; gen_scope ; echo generating ctags DB; gen_tags ; update_tags_to_vim_PAC; sort -u -o  ~/vim_tags/PAC/tags ~/vim_tags/PAC//tags' 
+
+alias ctxt='_open_current_context -g'
+alias ctxtt='_open_current_context -t'
+alias ctxtn='_open_current_context -n'
+alias ctxtv='_open_current_context -v'
+#alias ctxt_piano='_open_current_context_piano'
+#Logs
+#hypersrc is a solid source browser
+#alias hypersrc="/cygdrive/c/Documents\ and\ Settings/yytzhak/bin/hypersrc.pl"
+#Work, Nap-Nac aliases
+alias vi_hcap_spec='vi /cygdrive/c/work/acs/Nap-Nac/NAC_HCAP_Specification_External.doc'
+alias translate_error='_translate_acs_error'
+#ACS related
+
+#scripts
+alias ruby_i='ruby /cygdrive/c/work/scripts/ruby/eval.rb'
+
+#clearcase
+alias code_review_info='_generate_code_review_info'
+alias ct='cleartool'
+alias cdview='cd /cygdrive/m/view/'
+alias focus='echo Changing dir to focus bin dir for executing focus CLI; cd /cygdrive/f/bin/pc'
+alias list_COs="_list_checkouts"
+#
+#java related
+__java_set1_8__(){
+    export JAVA_HOME=$(/usr/libexec/java_home -v 1.8.0.292)
+    echo $JAVA_HOME
+    echo "Sometimes JAVA_HOME is not set properly. to set it manually check install java VMS. run $/usr/libexec/java_home -V"
+    echo "Then find where java home of desired VM is. run $find  /Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home -name java"
+    echo "Then set JAVA_HOME to this path. ex $export JAVA_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/bin/'"
+}
+alias java_versions='/usr/libexec/java_home -V'
+alias java_set1_8=__java_set1_8__
+
+
+
+alias locate_class_in_jar="_locate_in_jar"
+#java related
+#maven
+alias mdut=' mvn versions:display-dependency-updates'
+alias mdt="mvn dependency:tree"
+alias mci="mvn clean install"
+alias mcint="mvn clean install -DskipTests "
+alias mvni="mvn install"
+#maven
+
+# For cscope
+#cscope='mlcscope'
+#TMPDIR=/cygdrive/c/temp/
+#export TMPDIR
+
+#convenience
+alias resume_edit="_resume_editing_session"
+#alias resume_perl_session="gvim \`\ls -lrt  | awk ' /pl$/ {print $NF} '\`"
+
+#Cscope vim integration
+#alias cscope='freescope'
+
+alias kill_proc="_kill_proc"
+
+#Directory display tree
+alias tree="ls -R |  sed -e '/:$/s/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
+alias dir_tree="ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
+
+#ls shortcuts, execs and dirs
+alias ls_e=_ls_exe
+alias ls_d=_ls_dir
+alias ls_f=_ls_file
+alias ll='ls -la'
+alias l.='ls -d .* --color=auto'
+alias lt='ls -lrta'
+alias lS='ls -lSr'
+
+#cd aliases
+alias ..='cd ..'
+alias ...='cd ../../../'
+alias ....='cd ../../../../'
+alias .....='cd ../../../../'
+alias .4='cd ../../../../'
+alias .5='cd ../../../../..'
+
+alias mount='mount |column -t'
+alias h='history'
+alias j='jobs -l'
+
+alias ports='netstat -tulanp'
+
+alias iptlist='/sbin/iptables -L -n -v --line-numbers'
+alias iptlistin='/sbin/iptables -L INPUT -n -v --line-numbers'
+alias iptlistout='/sbin/iptables -L OUTPUT -n -v --line-numbers'
+alias iptlistfw='/sbin/iptables -L FORWARD -n -v --line-numbers'
+## pass options to free ## 
+alias meminfo='free -m -l -t'
+
+## get top process eating memory
+alias psmem='ps auxf | sort -nr -k 4'
+alias psmem10='ps auxf | sort -nr -k 4 | head -10'
+
+## get top process eating cpu ##
+alias pscpu='ps auxf | sort -nr -k 3'
+alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
+
+## Get server cpu info ##
+alias cpuinfo='lscpu'
+
+## older system use /proc/cpuinfo ##
+##alias cpuinfo='less /proc/cpuinfo' ##
+
+## get GPU ram on desktop / laptop## 
+alias gpumeminfo='grep -i --color memory /var/log/Xorg.0.log'
+
+# top is atop, just like vi is vim
+alias top='atop'
+
+#remote procedures
+alias push_file_ssh='_push_file_ssh'
+alias pull_file_ssh='_pull_file_ssh'
+
+#Efficient replacment to cp -r
+alias cpr_fast='_cpr_fast'
+
+#Copy to compressed file, Copy to uncompressed file
+alias cpz='_cpz'
+alias cpuz='_cpuz'
+
+#File system reports
+# Report directory size, sorted from smallest to largest
+alias report_dir_sizes='du -shc .??* * | sort +0n'
+#alias du_sort2='du -sm * | sort -nr | head -10'
+#alias du_sortroot="for i in $(echo -e \'G\nM\nK\'); do du -hsx /* 2>/dev/null | grep '[0-9]'$i | sort -rn; done"
+alias du_sortroot="du / -shc .??* * | sort +0n"
+#alias du_sort="du -hsc * |  ${MY_WORK_PATH}scripts/python/du_sort.py "
+
+#CPP
+# Search in all CPP files, headers and sources.
+#
+alias find_cpp='find . \( -name "*.[ch]" -o -name "*.cpp" -o -name "*.hpp" \)'
+
+#Extract rpm
+alias extract_rpm='_extract_rpm'
+
+#search pattern in file
+alias search_in_files="__search_in_files"
+alias findjs='find . -path ./node_modules -prune -o '
+
+alias export_ssh_pub_key='__export_ssh_pub_key'
+
+#mac
+alias show_hidden="defaults write com.apple.Finder AppleShowAllFiles TRUE ; killall Finder"
+alias hide_hidden="defaults write com.apple.Finder AppleShowAllFiles FALSE ; killall Finder"
+#mac
+#
+
+#SAP related
+export INTELLIJ_PATH="${HOME}/IdeaProjects/"
+alias cdij="cd ${INTELLIJ_PATH}"
+
+create_vim_files_list()
+{
+
+    if [ -z $1 ] 
+        then
+            echo "please provide project name"
+            return  0
+            fi
+
+
+            proj_name="$1"
+            vim_sessions_path="${HOME}/work/vim_sessions/"
+            sessions_file="${vim_sessions_path}${proj_name}_file"
+
+            if [ ! -e $sessions_file ] 
+                then
+                    echo "creating file ${sessions_file}"
+                    touch ${sessions_file}
+    fi
+
+        find . -name '*.java' > ${sessions_file}
+    echo "created list of java files ${sessions_file}"
+}
+alias mkvimsession='create_vim_files_list'
+
+#SAP related
+#rsync local copy src dir/file to trg dir/file
+alias rsynclcp='rsync -avzh'
+
+
+#git 
+__git_commit__()
+{
+    if [ -z "$1" ] 
+        then
+            echo "please provide commit name. For smart commit use comment JIRA: <JIRA_TAG>"
+            return  0
+            fi
+
+            echo "Commiting changes with comment $1"
+            git commit -m "$1" 
+}
+
+
+__git_push__set_currentbranch_upstream_origin()
+{
+    branch=$(git rev-parse --abbrev-ref HEAD)
+    echo "push $branch and setting upsteam to origin." 
+    git push --set-upstream origin $branch
+}
+
+__git_push__set_upstream_origin()
+{
+    if [ -z $1 ] 
+        then
+            echo "please provide remote branch name."
+            return  0
+            fi
+
+            echo "setting upstream_origin and pushing to $1"
+            git push --set-upstream origin $1
+}
+
+__git_push__origin()
+{
+    if [ -z $1 ] 
+        then
+            echo "please provide remote branch name."
+            return  0
+            fi
+
+            echo "Pushing changes to origin $1"
+            git push origin $1
+}
+
+__git_ls_modified__()
+{
+    echo "showing all modified files. Staged, Unstaged and Untracked:"
+        git status | awk '/modified:/ {print $2}'
+}
+
+__git_ls_modified_notstaged__()
+{
+    echo "showing all Unstaged files:"
+        git ls-files -m 
+}
+
+__git_diff__()
+{
+#obsolete, just git diff has same result...
+    for file in $(git status | awk '/modified:/ {print $2}'); do
+        git diff $file
+            done
+}
+
+__git_diff_br__()
+{
+    if [ -z $2 ] 
+        then
+            echo "please provide two branch or two commit names/labels."
+            return  0
+            fi
+
+            git diff $1..$2
+}
+
+__git_diff_br_remote__()
+{
+    if [ -z $1 ] 
+        then
+            echo "please provide branch name."
+            return  0
+            fi
+
+            git diff $1..origin/$1
+}
+
+__git_show_stat__()
+{
+    if [ -z $1 ] 
+        then
+            echo "please provide git label / hash ."
+            return  0
+            fi
+
+            git show $1 --stat
+}
+
+__git_diffg__()
+{
+    for file in $(git status | awk '/modified:/ {print $2}'); do
+        git difftool $file
+            done
+}
+
+__gitmrgto__()
+{
+    if [ -z $2 ] 
+        then
+            echo "please provide source and target branches for merge."
+            return  0
+            fi
+            echo "merging branch $1 into $2"
+            git merge $1 $2
+}
+
+__gitdelLocalandRemote__()
+{
+    if [ -z $1 ] 
+        then
+            echo "please provide branch name to be deleted."
+            return  0
+            fi
+
+            echo "deleting both local and remote versions of branch $1" 
+
+            while true; do
+                read -p  "Are you sure you want to delete?" yn
+                    case $yn in
+                    [Yy]* ) echo "delete local branch $1" && git branch -D $1 && echo "delete remote branch $1" && git push origin --delete $1 ; echo "pruning local refs..." && git remote prune origin; break;;
+    [Nn]* ) break;;
+    * ) echo "Please answer yes or no.";;
+    esac 
+        done
+
+}
+
+__git_rebase_branch_from_master__()
+{
+    br=""
+        if [ -z $1 ]   
+            then
+                br=$(git rev-parse --abbrev-ref HEAD) 
+        else 
+            br="$1"
+                fi
+
+                echo "branch $br is to be rebased from master"
+
+                echo "saving work"
+                git stash save ${br}_save_before_master_merge
+
+                echo "rebasing master"
+                gitco master && git pull --rebase origin master
+
+                echo "merging from master"
+                git checkout ${br}
+    git merge master 
+        git stash pop
+
+        echo "updated commit tree..."
+        git log --decorate --oneline --graph  --all -10
+
+        echo "run gitmrgt in case of conflicts"
+
+}
+
+__gitcosubbranch__(){
+    if [ -z $2 ] 
+    then
+        echo "please provide sub branch and branch names"
+        return  0
+    fi
+    echo "creating new local development sub branch $1 of $2" 
+    echo "manually creation example: $ git checkout -b yosirc origin/rc" 
+    echo "list tracking branches: $git branch -vv" 
+
+    git checkout -b $1 $2
+}
+
+__gitcrtnewbr__()
+{
+    if [ -z $1 ] 
+    then
+            echo "please provide new branch name for local development."
+            return  0
+    fi
+    echo "creating new local development branch $1" 
+
+    echo "rebasing master"
+    gitco master && git pull --rebase origin master
+
+    git checkout -b $1
+}
+
+__gitcobr__(){
+    echo "creating a local tracking branch $1"
+    if [ -z $1 ] 
+        then
+            echo "please provide local branch name to track remote branch"
+            return  0
+            fi
+
+            echo "creating local branch $1 to track remote $1" 
+            git checkout -b $1
+            git branch --set-upstream-to=origin/$1 $1
+            git pull
+}
+
+__git_dell_all_branches_but_master__(){
+    while true; do
+        read -p  "Are you sure you want to delete all your git branches?" yn
+            case $yn in
+            [Yy]* ) for branch in $(gitb | grep -v master); do echo "deleting branch $branch"; __gitdelLocalandRemote__ $branch ; done ; break;;
+    [Nn]* ) break;;
+    * ) echo "Please answer yes or no.";;
+    esac 
+        done
+
+}
+
+__git_dell_all_yosi_branches__(){
+    for b in $( gitb | grep yosi ); do __gitdelLocalandRemote__ $b; done
+}
+
+#expect file name and commit label
+__gitshowfilediff__(){
+    if [ -z $2 ] 
+        then
+            echo "please provide file name and commit label (hash)"
+            return  0
+            fi
+            git show $2 $1 
+}
+
+#expect file name and commit label
+__gitshowfile__(){
+    if [ -z $2 ] 
+        then
+            echo "please provide file name and commit label (hash)"
+            return  0
+            fi
+            git show $2:$1 
+}
+
+##__gitlsmodified__(){
+##        git status | grep modified | awk '{print $NF}'
+##}
+
+__gitamodified__(){
+    for file in $( git ls-files -m ) ; do echo "running git add $file "; git add $file ; done
+}
+
+alias gitlsbrAll='git branch -a'
+alias gitlsbrLocal='git branch -l'
+alias gitlsbrRemote='git branch -r'
+alias gitlsModAll='__git_ls_modified__'
+alias gitlsModUnstaged='__git_ls_modified_notstaged__'
+alias gitdiffToFrom='__git_diff_br__'
+alias gitdiffbrrem='__git_diff_br_remote__'
+alias gitshowfilediff='__gitshowfilediff__'
+alias gitshowfile='__gitshowfile__'
+alias gitcat=gitshowfile
+alias gitshowstat='__git_show_stat__'
+#alias gitdiff='__git_diff__'
+#alias gitdiffg='__git_diffg__'
+alias gits='git status'
+alias gitdiffunstaged='git diff '
+alias gitd='git diff '
+alias gitdg='git difftool '
+alias gitdiffstaged='git diff --staged'
+alias gitdiffstagedg='git difftool --staged'
+alias gitdel='git branch -d  '
+alias gita='git add '
+alias gitl='git log '
+alias gitaa='git add .'
+alias gitaMod='__gitamodified__'
+alias gitb='git branch '
+alias gitbvv='git branch -vv '
+alias gitbc='git rev-parse --abbrev-ref HEAD' 
+alias gitco='git checkout '
+alias gitcosub='__gitcosubbranch__'
+alias gitcom='git checkout master '
+alias gitcobt='__gitcobr__'
+alias gitcob='git checkout -b '
+alias gitcobg='git checkout -b yosi_$(datepf)'
+alias gitcommit='__git_commit__'
+alias gitcoM='git checkout master'
+alias gitundoCo='git checkout master -- '
+alias gitp='git pull'
+alias gitfp='git fetch && git pull'
+alias gitps='git push'
+alias gitpso='__git_push__origin'
+alias gitpsub='__git_push__set_upstream_origin'
+alias gitpsu='__git_push__set_currentbranch_upstream_origin' 
+alias gitmrg='git merge'
+alias gitmrgto='__gitmrgto__'
+alias gitmrgt='git config merge.tool vimdiff && git config mergetool.prompt false && git mergetool'
+alias gitcrtnewbr='__gitcrtnewbr__'
+alias gitrebasemaster='gitco master && git pull --rebase origin master' #co and rebase master.
+alias gitrebase='__git_rebase_branch_from_master__'
+alias gitcwb='git rev-parse --abbrev-ref HEAD' #print current working branch
+alias gitdelLocalandRemote='__gitdelLocalandRemote__' 
+alias gitdel_local='git branch -D' 
+alias gitdel_remote='git push origin --delete && git remote prune origin ' 
+alias gitstash='git stash '  #no message
+alias gitst='gitstash '  #no message
+alias gitstp='git stash pop'  #no message
+alias gitstls='git stash list'  #list stashes
+alias gitstashshow='git stash show'  #show changes
+alias gitstashshowcode='git stash show -p'  #show changes
+alias gitstlabel='git stash save '  #expects message
+alias gitpop='git pop '  #default - pop last stash stash@{0}, specify stash@{n} to pop a specific stash
+alias gitapply='git stash apply '  #default - just apply, don't pop last stash stash@{0}, specify stash@{n} to pop a specific stash
+alias gitldog='git ldog --all'
+alias gitdelAllBranches='__git_dell_all_branches_but_master__'
+alias gitdelAllYosiBranches='__git_dell_all_yosi_branches__'
+alias gitShowRemoteTrackingBranch='git branch -vv'
+
+__gitBackupWIP__() {
+    tmpdir="${HOME}/temp"
+    echo "Backing up local git changes to $tmpdir"
+    for file in $( gits | awk '/new file/ || /modified/ {print $NF}' ); do
+        echo "backing up $file"
+        cp $file $tmpdir ; 
+    done
+}
+alias gitBackupWIP='__gitBackupWIP__'
+
+__npmmv2dev__()
+{
+    if [ -z $1 ] 
+        then
+            echo "please provide module name"
+            return  0
+            fi
+            echo "moving module $1 from prod to dev dependencies"
+            npm i $1  -D
+}
+
+__npmshowLatestVer__(){
+    if [ -z $1 ] 
+        then
+            echo "please provide module name"
+            return  0
+            fi
+            echo "module $1 version:"
+            npm show $1 version
+}
+
+__npmshowVers__(){
+    if [ -z $1 ] 
+        then
+            echo "please provide module name"
+            return  0
+            fi
+            echo "module $1 versions:"
+            npm show $1 versions
+}
+
+__npmmv2prod__()
+{
+    if [ -z $1 ] 
+        then
+            echo "please provide module name"
+            return  0
+            fi
+            echo "moving module $1 from dev to prod dependencies"
+            npm i module-example -P
+}
+
+#npm
+#install. don't update dependencies in package.json
+alias npmi='npm i'
+alias npmip='npm i --only=prod'
+#uninstall. don't update dependencies in package.json
+alias npmui='npm uninstall'
+#install.  update dependencies in package.json
+alias npmis='npm i --save'
+#install.  exact version. update dependencies in package.json. no ^ operator
+alias npmise='npm i --save --save-exact'
+#uninstall. don't update dependencies in package.json
+alias npmuis='npm uninstall --save'
+#install.  update dev dependencies in package.json
+alias npmid='npm i --save-dev '
+#install.  update dev dependencies in package.json
+alias npmide='npm i --save-dev --save-exact'
+#uninstall. update dev dependencies in package.json
+alias npmuid='npm uninstall --save-dev'
+#install exact version, no ^ (take latest) prefix.  don't update dev dependencies in package.json
+alias npmie='npm i -E'
+#install exact version.  update dependencies in package.json
+alias npmise='npm i --save -E'
+alias npmig='npm i -g'
+alias npmst='npm start'
+alias npmt='npm test'
+alias npmmv2dev='__npmmv2dev__'
+alias npmmv2prod='__npmmv2prod__'
+alias npmshowLatestVer='__npmshowLatestVer__'
+alias npmshowVers='__npmshowVers__'
+#list outdated dependencies
+alias npmold='npm outdated'
+alias npmold_global='npm outdated -g --depth=0'
+alias npmupdate='npm update'
+alias npmupdate_global='npm update -g'
+
+alias backup="~/work/scripts/python/backup2OneDrive.py"
+alias eclipse="cd /Users/i500695/eclipse/jee-2018-09 ; open Eclipse.app/ "
+
+#pretty print date as valid filename
+alias datepf=" date +\"%d_%m_%y__%H_%M\" "
+#pretty print date 
+alias datepp=" date +\"%d/%m %Y ,%H:%M\" "
+
+#nodejs, semantic
+alias grunt_test_mocha_local=" grunt mochaTest:local"
+alias grunt_test_local="grunt nyc:local"
+alias grunt_eslint_local="grunt eslint:local"
+alias grunt_tslint_local="grunt tslint:local"
+alias grunt_elocal="grunt nyc:local && grunt eslint:local"
+#alias grunt_tlocal="grunt nyc:local && if tslint -p tsconfig.json -c tslint.json ; then echo 'tslint check passed'; else echo 'tslint check failed'; fi"
+alias grunt_tlocal="grunt nyc:local && if npm run lint; then echo 'tslint check passed'; else echo 'tslint check failed'; fi"
+alias npm_btl="npm run build && npm run test:local && npm run test:integration:local &&  npm run lint"
+alias startSemanticCF_Local="export MODE=mock && export NODE_ENV=local && npm start"
+#alias semanticEnv="echo $MODE $NODE_ENV "
+#
+# provisioning 
+alias mvnProv="mvn clean install -Ddb.username=i500695 -Ddb.password=Abcd1234"
+
+__dtapprouterLint__()
+{
+    dirs=( static-resources/infra static-resources/contentManager static-resources/site-directory)
+        for dir in ${dirs[@]}; do echo "linting $dir"; cd $dir; npm run local-lint ; cd - ; done
+}
+alias dtapprouterLint='__dtapprouterLint__'
+
+
+#CF related
+__semanticEnv(){
+    echo "MODE=$MODE"
+        echo "NODE_ENV=$NODE_ENV"
+        echo "VCAP_SERVICES=${VCAP_SERVICES}"
+}
+
+alias semanticEnv="__semanticEnv"
+
+#cf related
+__cfRunForAllApps__(){
+    if [ -z $1 ] 
+        then
+            echo "please provide command to run on all apps. e.g. start / stop / restage"
+            return  0
+    fi
+       echo "running $1 for all cf apps "
+
+       for ap in $(cf a | awk '/portal/ {print $1}') ; do 
+           cf $1 $ap&
+       done
+}
+
+__cf_set_debug_log__(){
+    cf set-env $1 CF_APP_LOG_LEVEL debug && cf restage $1 
+}
+
+alias cfh='cf help' #can add command, like push etc
+alias cfl='cf logs' #requires target app
+alias cfl_semantic='cf logs portal-cf-site-semantic-service'
+alias cfe='cf env' #requires target app
+alias cfse='cf set-env' #requires target app, variable name, variable value 
+alias cfsetDebugLog='__cf_set_debug_log__'
+alias cfe_semantic='cf env portal-cf-site-semantic-service'
+alias cfp='cf push -f' #requires manifest-dev.yml / manifest.yml
+alias cfds='cf ds' #delete service. requires target service
+alias cfus='cf us' #unbind service from app. requires target app + service
+alias cfcs='cf create-service' #ex: cfcs metering-service default  portal-metering-service -c '{"providerToken":"f3efd8a9-dfc7-4a98-83d6-d6c922b05a6c"}' 
+alias cfbs='cf bs' #bind service. requires app + service.
+
+alias cfapi_canari_eu10='cf api api.cf.eu10.hana.ondemand.com'
+alias cfapi_canari_eu12='cf api api.cf.eu12.hana.ondemand.com'
+alias cflogin=' cf login --sso'
+alias cflogineu12='cf login --sso -a  https://api.cf.eu12.hana.ondemand.com'
+alias cflogincanary=' cf login --sso -a https://api.cf.sap.hana.ondemand.com'
+alias cflogineu10='cf login --sso -a https://api.cf.eu10.hana.ondemand.com'
+alias cfteu10portal=' cf t -o SAP_PORTAL_SERVICES -s Portal'
+
+##old systems
+#alias cftyb3='cf t -o backbone -s yosib3'
+#alias cftyb4='cf t -o backbone -s yosib4'
+#alias cfty03='cf t -o site-manager -s yosi03'
+#alias cftboris='cf t -o site-manager -s borisl'
+#alias cftuni='cf t -o site-manager -s universe'
+#alias cftguy='cf t -o site-manager -s guymos'
+
+
+alias cftcimaster='cf t -o flpci -s cimaster'
+alias cftltseu10=' cf t -o mainsub -s lts'
+alias cftrcteu12=' cf t -o rcsubeu12 -s rcteu12'
+alias cftlph='cf t -o launchpad -s i055502p'
+alias cftlpy='cf t -o launchpad -s i500695p'
+alias cftlps='cf t -o launchpad -s i310019p'
+alias cftlpsaar='cf t -o launchpad -s i060224p'
+alias cftlphadar='cf t -o launchpad -s i055502p'
+alias cftalma='cf t -o portal-prov -s alma'
+alias cftboris='cf t -o portal-prov -s mazda2'
+alias cftdaily='cf t -o mainsub -s daily'
+alias cftperf='cf t -o  swzperf -s perfdev'
+
+#note cf ssh was changed to cf v3-ssh 
+alias cfsshsem='cf ssh portal-cf-site-semantic-service'
+alias cfRunForAllApps='__cfRunForAllApps__'
+alias cfRestageAllApps='__cfRunForAllApps__ restage'
+alias cfStopAllApps='__cfRunForAllApps__ stop'
+alias cfStartAllApps='__cfRunForAllApps__ start'
+
+alias loggySemantic='loggy -a portal-cf-site-semantic-service'
+alias loggyProvisioning='loggy -a portal-cf-provisioning-service'
+alias loggyTransport='loggy -a portal-cf-transport-service'
+alias loggyCdmStore='loggy -a portal-cf-cdm-store-service'
+alias loggyDTAppRTR='loggy -a portal-cf-dt-approuter'
+alias remDbgSemantic='cf ssh -N -T -L 9229:127.0.0.1:9229 portal-cf-site-semantic-service'
+alias remDbgTransport='cf ssh -N -T -L 9229:127.0.0.1:9229 portal-cf-transport-service'
+__printvcap() {
+    if [ -z $1 ] 
+        then 
+        echo "please provide micro service name"
+        return  0
+    fi
+    app="$1"
+
+     cf ssh $app -c "echo \$VCAP_SERVICES" | jq -r  '.' 
+}
+alias cfprintvcap='__printvcap'
+
+__printIdZoneId__() {
+    if [ -z $1 ] 
+        then 
+        echo "please provide micro service name"
+        return  0
+    fi
+    app="$1"
+
+     cf ssh $app -c "echo \$VCAP_SERVICES" | jq -r  '.xsuaa[0].credentials.identityzoneid' 
+}
+
+alias cfprintIdZoneId='__printIdZoneId__'
+__printTenantId__() {
+    if [ -z $1 ] 
+        then 
+        echo "please provide micro service name"
+        return  0
+    fi
+    app="$1"
+
+     cf ssh $app -c "echo \$VCAP_SERVICES" | jq -r  '.xsuaa[0].credentials.tenantid' 
+}
+
+alias cfprintTenantId='__printTenantId__'
+__remRedisTransport__() {
+    echo "fetching redis cf env params and opening a secure tunnel"
+#cf ssh portal-cf-transport-service -c "echo \$VCAP_SERVICES" | jq "{ residHost: .redis[0].credentials.hostname, redisPassword: .redis[0].credentials.password, redisPort: .redis[0].credentials.port}"  | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' 
+
+        #redis_service_fabric="redis"
+        #redis_service_hyperscaler="redis-cache"
+
+# For now set for hyperscaler
+            export redisHost=$( cf ssh portal-cf-transport-service -c "echo \$VCAP_SERVICES" | jq -r '  .["redis-cache"][0].credentials.hostname ' )
+            export redisPort=$( cf ssh portal-cf-transport-service -c "echo \$VCAP_SERVICES" | jq -r '  .["redis-cache"][0].credentials.port ' )
+            export redisPassword=$( cf ssh portal-cf-transport-service -c "echo \$VCAP_SERVICES" | jq -r '  .["redis-cache"][0].credentials.password ' )
+            echo "redisHost=${redisHost}, redisPort=${redisPort}, password=${redisPassword}"
+            echo "creating ssh tunnel from local 9001 to remote ${redisHost}:${redisPort}. Plz make sure to have a local http server on 9001. eg. python3 -m http.server 9001" 
+            cf ssh -L 9001:${redisHost}:${redisPort} portal-cf-transport-service
+
+
+        #export redisHost=$( cf ssh portal-cf-transport-service -c "echo \$VCAP_SERVICES" | jq -r '  .redis[0].credentials.hostname ' )
+        #if [  -n "$redisHost" ] 
+        #    then 
+        #    echo "Found redis fabric host $redisHost"
+        #    export redisPort=$( cf ssh portal-cf-transport-service -c "echo \$VCAP_SERVICES" | jq -r '  .redis[0].credentials.port ' )
+        #    export redisPassword=$( cf ssh portal-cf-transport-service -c "echo \$VCAP_SERVICES" | jq -r '  .redis[0].credentials.password ' )
+        #    echo "redisHost=${redisHost}, redisPort=${redisPort}, password=${redisPassword}"
+        #    echo "creating ssh tunnel from local 9001 to remote ${redisHost}:${redisPort}. Plz make sure to have a local http server on 9001..." 
+        #    cf ssh -L 9001:${redisHost}:${redisPort} portal-cf-transport-service
+        #else
+        #    echo "Not Found redis fabric host $redisHost. Trying service fabric"
+        #    export redisHost=$( cf ssh portal-cf-transport-service -c "echo \$VCAP_SERVICES" | jq -r '  .["redis-cache"][0].credentials.hostname ' )
+        #    echo "redis host $redisHost"
+        #    if [  -n "$redisHost" ] 
+        #        then 
+        #        echo "Found redis hyperscaler host $redisHost"
+        #        export redisPort=$( cf ssh portal-cf-transport-service -c "echo \$VCAP_SERVICES" | jq -r '  .["redis-cache"][0].credentials.port ' )
+        #        export redisPassword=$( cf ssh portal-cf-transport-service -c "echo \$VCAP_SERVICES" | jq -r '  .["redis-cache"][0].credentials.password ' )
+        #        echo "redisHost=${redisHost}, redisPort=${redisPort}, password=${redisPassword}"
+        #        echo "creating ssh tunnel from local 9001 to remote ${redisHost}:${redisPort}. Plz make sure to have a local http server on 9001. eg. python3 -m http.server 9001" 
+        #        cf ssh -L 9001:${redisHost}:${redisPort} portal-cf-transport-service
+        #    else
+        #        echo "Not Found redis hyperscaler host $redisHost"
+        #    fi
+        #fi
+}
+
+
+alias remRedisTransport=__remRedisTransport__
+
+#todo
+__remProvisioningPGTunnel() {
+    if [ -z $1 ] 
+        then 
+        echo "please provide local port"
+        return  0
+    fi
+    PORT="$1"
+__remPortalPGTunnel portal-cf-provisioning-service $PORT
+}
+
+__remPGTunnel(){
+    echo "opening a remote SSH tunnel to CF cell of portal-cf-technical-support-green"
+    if [ -z $1 ] 
+        then 
+        echo "please provide local port"
+        return  0
+    fi
+    PORT="$1"
+__remPortalPGTunnel portal-cf-technical-support-green $PORT
+}
+
+__remCDMStorePGTunnel() {
+    if [ -z $1 ] 
+        then 
+        echo "please provide local port"
+        return  0
+    fi
+    PORT="$1"
+
+    CDM_STORE_INSTANCE_NAME=$(cf a | grep portal-cf-cdm-store | awk 'NR==1 {print $1}')
+    echo "connection parameters: $CDM_STORE_INSTANCE_NAME $PORT $2"
+    #echo " example command: portal postgres-ssh -p 6000 -a portal-cf-cdm-store-service -i portal-postgresql-db-dt"
+__remPortalPGTunnel $CDM_STORE_INSTANCE_NAME $PORT portal-postgresql-db-dt
+}
+
+__remPortalPGTunnel() {
+    if [ -z $2 ] 
+        then 
+            echo "please provide service name and local port"
+            return  0
+    fi
+       echo "To connect to a non default pg instance please provide the instance"
+       echo "Note to manually create a ssh tunnel run: cf ssh -L ${LOCALPORT}:${ServicedbHost}:${ServicedbPort} ${SERVICE_NAME} " 
+       SERVICE_NAME="$1"
+       PORT="$2"
+       if [[ -n "$3" ]]; then #instance parameter
+           echo "running: portal postgres-ssh -a ${SERVICE_NAME} -p ${PORT} -i $3"
+           portal postgres-ssh -a ${SERVICE_NAME} -p ${PORT}  -i $3
+       else
+           echo "running: portal postgres-ssh -a ${SERVICE_NAME} -p ${PORT}"
+           portal postgres-ssh -a ${SERVICE_NAME} -p ${PORT} 
+    fi
+}
+
+__remServicePGTunnel() {
+#Obseleted by Jawad's portal cli. Wrapped by __remPortalPGTunnel
+
+    if [ -z $2 ] 
+        then 
+        echo "please provide service name and local port"
+        return  0
+    fi
+    SERVICE_NAME="$1"
+    PORT="$2"
+    echo "exporting $SERVICE_NAME cf env params "
+    #echo "Full env printout:"
+    #cf ssh ${SERVICE_NAME} -c "echo \$VCAP_SERVICES"
+        export ServicedbName=$( cf ssh ${SERVICE_NAME} -c "echo \$VCAP_SERVICES" | jq -r ' .postgresql[0].credentials.dbname' )
+        export ServicedbHost=$( cf ssh ${SERVICE_NAME} -c "echo \$VCAP_SERVICES" | jq -r ' .postgresql[0].credentials.hostname' )
+        export ServicedbUsr=$( cf ssh ${SERVICE_NAME} -c "echo \$VCAP_SERVICES" | jq -r ' .postgresql[0].credentials.username ' )
+        export ServicedbPwd=$( cf ssh ${SERVICE_NAME} -c "echo \$VCAP_SERVICES" | jq -r ' .postgresql[0].credentials.password ' )
+        export ServicedbPort=$( cf ssh ${SERVICE_NAME} -c "echo \$VCAP_SERVICES" | jq -r ' .postgresql[0].credentials.port ' )
+        echo "ServicedbName=${ServicedbName},ServicedbHost=${ServicedbHost},ServicedbUsr=${ServicedbUsr},ServicedbPwd=${ServicedbPwd},ServicedbPort=${ServicedbPort},"
+
+        export LOCALPORT="$PORT"
+        echo "spawning local http server listening on ${LOCALPORT}"
+        python3 -m http.server $LOCALPORT &
+        echo "create a ssh tunnel by running: cf ssh -L ${LOCALPORT}:${ServicedbHost}:${ServicedbPort} ${SERVICE_NAME} " 
+        echo "cf ssh -L ${LOCALPORT}:${ServicedbHost}:${ServicedbPort} $SERVICE_NAME"  | pbcopy
+        echo "command is also copied to clipboard"
+#cf ssh -L ${LOCALPORT}:${CDMdbName}:${CDMdbPort} portal-cf-cdm-store-service
+}
+
+alias remPGTunnel='__remPGTunnel'
+alias remCDMStorePGTunnel='__remCDMStorePGTunnel'
+alias remProvisioningPGTunnel='__remProvisioningPGTunnel'
+alias runMedis='cd ~/work/SAP/git/medis && npm start& '
+
+__setCFAUTHENV__(){
+    echo "setting CF auth params as env params for app $1"
+        $(  cf ssh $1 -c "echo \$VCAP_SERVICES" | jq "{ url: .xsuaa[0].credentials.url, clientid: .xsuaa[0].credentials.clientid, clientsecret: .xsuaa[0].credentials.clientsecret }"  | jq -r 'keys[] as $k | "export \($k)=\(.[$k])"' ) 
+}
+
+__printCFAUTHENV__(){
+    echo "print CF auth params for app $1"
+#        cf ssh $1 -c "echo \$VCAP_SERVICES" | jq "{ url: .xsuaa[0].credentials.url, clientid: .xsuaa[0].credentials.clientid, clientsecret: .xsuaa[0].credentials.clientsecret }"  
+        cf ssh $1 -c "echo \$VCAP_SERVICES" | jq "{ url: .xsuaa[0].credentials.url, clientid: .xsuaa[0].credentials.clientid, clientsecret: .xsuaa[0].credentials.clientsecret , portalServiceUrl: .[\"user-provided\"][0].credentials.portalServiceUrl }"  | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' 
+}
+
+__printCFCDMStoreData__(){
+    echo "print CF CDM Store data"
+        cf ssh portal-cf-cdm-store-service -c "echo \$VCAP_SERVICES" | jq "{ dbname: .postgresql[0].credentials.dbname, host: .postgresql[0].credentials.hostname, password: .postgresql[0].credentials.password , port: .postgresql[0].credentials.port , username: .postgresql[0].credentials.username }"  | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' 
+}
+
+__printCFAppURL__(){
+    cf ssh $1 -c "echo \$VCAP_APPLICATION" | jq -r ' .uris[0]'
+}
+alias setCFAUTHENV='__setCFAUTHENV__'
+alias printCFAUTHENV='__printCFAUTHENV__'
+alias printCFAUTHENV4DTAPPRTR='__printCFAUTHENV__ portal-cf-dt-approuter'
+alias printCFCDMStoreData='__printCFCDMStoreData__'
+alias printCFAppURL='__printCFAppURL__'
+alias getMyToken='~/work/SAP/code/python/CF/pcliGetToken.py --u yosi.izaq@sap.com -a backbone-saas'
+
+__getAToken__(){
+    if [ -z $2 ] 
+        then
+            echo "please provide user and org parameters. For example:"
+            echo "getAToken yosi.izaq@sap.com backbone-saas"
+            return  0
+            fi
+            echo "requesting user token for $1 on org $2"
+            ~/work/SAP/code/python/CF/pcliGetToken.py --u $1 -a $2
+
+}
+alias getAToken='__getAToken__'
+
+
+__printJWT__(){
+    pyjwt decode --no-verify $1 | python -m json.tool
+}
+alias printJWT='__printJWT__'
+#CF related
+#
+
+alias gen_client_token="portal gct -s portal-xsuaa-broker"
+
+__validateXML__()
+{
+    if xmllint $1  >& /dev/null ; then echo "XML file $1 is valid"; else echo "XML file $1 is invalid"; fi
+}
+alias validateXML='__validateXML__'
+
+alias pwdcp="pwd| tr -d '\n' | pbcopy" #run pbpaste to paste back
+alias pwdcd='cd $(pbpaste )'
+#SAP related
+alias del_orig="find . -name '*.orig' | xargs rm"
+
+#tmux
+alias tmxkill='tmux kill-server'
+alias tmxls='tmux ls'
+alias tmxa='tmux attach -t '
+alias tmxrns='tmux rename-session -t '
+alias tmxns='tmux new -s '
+#tmux
+#
+alias py='python'
+alias py3='python3'
+alias ipyt='ipython --profile=yosi'
+
+alias localServer='python -m SimpleHTTPServer 3001'
+
+
+alias ij='open -a "IntelliJ IDEA"'
+alias chrome='open -a "Google Chrome"'
+alias safari='open -a "Safari"'
+alias chromium='/Users/i500695/apps/chrome-mac/Chromium.app/Contents/MacOS/Chromium&'
+alias skype='open -a "Skype for Business"'
+#alias code=open -a "Visual Studio Code" #not required
+alias slack='open -a "Slack"'
+alias outlook='open -a "Microsoft Outlook"'
+alias teams='open -a "Microsoft Teams"'
+alias notes='open -a "Notes"'
+alias whatsapp='open -a "WhatsApp"'
+alias word='open -a "Microsoft Word"'
+
+
+#nestjs aliases
+##new project
+alias nestn='nest n '
+##project info
+alias nesti='nest i '
+##generate code
+alias nestga='nest g application '
+alias nestgcl='nest g class '
+alias nestgco='nest g controller '
+alias nestgdec='nest g decorator '
+alias nestgf='nest g filter '
+alias nestgi='nest g interface '
+alias nestgmid='nest g middleware '
+alias nestgm='nest g module '
+alias nestgpi='nest g pipe '
+alias nestgpr='nest g provider '
+alias nestgr='nest g resolver '
+alias nestgs='nest g service '
+#nestjs aliases
+
+#fzf
+alias codef='code $(fzf)'
+alias vimf='vim $(fzf)'
+__cdf__(){
+cd $(find  * -type d | fzf)
+}
+alias cdf='__cdf__'
+
+alias nvif='nvi $(fzf)'
+alias lsf='ls $(fzf)'
+
+#AG 
+## display all matches
+alias agjava='Ag --java'
+alias agts='Ag --ts'
+alias agjs='Ag --js'
+alias agpyt='Ag --python'
+
+## display all matching files
+alias agjavafiles='Ag --java -l'
+alias agtsfiles='Ag --ts -l'
+alias agjsfiles='Ag --js -l'
+alias agpytfiles='Ag --python -l'
+
+#go
+export GOPATH="${HOME}/.go"
+export GOROOT="$(brew --prefix golang)/libexec"
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+test -d "${GOPATH}" || mkdir "${GOPATH}"
+test -d "${GOPATH}/src/github.com" || mkdir -p "${GOPATH}/src/github.com"
+#go
+
+#sap cf btp cli 
+export PATH="$PATH:${HOME}/work/SAP/CF/tools/"
+#sap cf btp cli 
+
+#
+#alias +='less'
+alias stunnelfull='pkill stunnel; stunnel; lsof -nP -iTCP:6380,1295 ; cat /usr/local/etc/stunnel/stunnel.conf'
+alias tcpd='tcpdump -s 0 -w ' #to view run wireshark <capture name>
+
+
+_cp_sap_backup_(){
+    icloud_loc=~/Library/Mobile\ Documents/com~apple~CloudDocs/
+    one_drive_loc=/Users/i500695/Library/CloudStorage/OneDrive-SAPSE
+    backups_loc="$HOME/backups"
+    if [ ! -d "${backups_loc}" ]
+    then 
+        echo "${backups_loc} does not exist. creating it"
+        mkdir "${backups_loc}"
+    fi 
+    backupfile=${backups_loc}/$(lt ~/backups/ | grep yosi_backup | awk 'END {print $NF}')
+    echo "copy last backup file $backupfile to $icloud_loc $one_drive_loc"
+    echo "cp $backupfile $icloud_loc/$backupfile "
+    cp "$backupfile" "$icloud_loc"
+    echo "cp $backupfile $one_drive_loc/$backupfile "
+    cp "$backupfile" "$one_drive_loc"
+
+    echo "backup files in one drive:"
+    ls -ltr "$one_drive_loc" | grep yosi 
+    echo "backup files in icloud:"
+    ls -ltr "$icloud_loc" | grep yosi 
+}
+
+_SAP_mac_backup(){
+        banner -w 50 "Initiating SAP MAC backup for $(whoami) " 
+        echo "------------------------------------------------"
+        echo "Starting backup of knwoledge base, scripts and daily context files, for MAC env..."
+        echo "------------------------------------------------"
+
+        back_path="${HOME}/backups"
+
+        date_str=$( date +"%d_%m_%y" )
+        backup_fname="yosi_backup_${date_str}"
+        small_backup_fname="yosi_small_backup_${date_str}"
+        backup_file="$back_path/${backup_fname}.tar"
+        small_backup_file="$back_path/${small_backup_fname}.tar"
+        cd ~
+        
+        echo "------------------------------------------------"
+        echo "date is $date_str"
+        echo "Compressing to ${backup_fname} and to ${small_backup_file} ..."
+        echo "------------------------------------------------"
+        
+        #cd ${HOME}/work
+        #echo "------------------------------------------------"
+        #echo "backup KB, context files and scripts"
+        #echo "------------------------------------------------"
+        #sleep 3
+        #tar cvf $backup_file  KB context* scripts code SAP
+        #tar cvf $small_backup_file  KB/ context* scripts 
+        #echo "------------------------------------------------"
+
+        echo "------------------------------------------------"
+        echo "backup all .xxx files including .vim .config, also backup work/"
+        echo "------------------------------------------------"
+        sleep 3
+        tar cvf $backup_file .bash_profile .zsh_history .zhistory  .zshrc .aliases .bashrc .pythonrc .ideavimrc .vimrc .zsh_history .bash_history .python_history .vim/ work/ .config/
+        echo "------------------------------------------------"
+        echo "backup only .xxx files including .vim .config"
+        echo "------------------------------------------------"
+        sleep 3
+        tar cvf $small_backup_file .bash_profile .zshrc .aliases .bashrc .pythonrc .ideavimrc .vimrc .zsh_history .bash_history .python_history .vim/ 
+
+        echo "------------------------------------------------"
+        echo "Compressing..."
+        echo "------------------------------------------------"
+        bzip2 -f $backup_file  
+        bzip2 -f $small_backup_file  
+        echo "------------------------------------------------"
+        echo "backup file: ${backup_file}.bz2, size: $( ls -lh ${backup_file}.bz2 | awk '{print $5}' )"  
+        echo "small backup file: ${small_backup_file}.bz2, size: $( ls -lh ${small_backup_file}.bz2 | awk '{print $5}' )"  
+
+        echo "------------------------------------------------"
+        echo "Uploading to cloud backups..."
+        _cp_sap_backup_
+        echo "------------------------------------------------"
+        echo "Backup complete! have a nice day :\) "
+        echo "------------------------------------------------"
+        cd -
+}
+
+alias cp_sap_backup='_cp_sap_backup_'
+alias sap_backup='_SAP_mac_backup'
+sap_start(){
+    rolling_banner
+        datepp
+        KBE
+        ctxt
+
+        open -a "Google Chrome"
+        #open -a "BIG-IP Edge Client"
+        #open -a "F5Access"
+        open -a GlobalProtect
+        open -a "Safari"
+        open -a "Skype for Business"
+        open -a "Visual Studio Code"
+        #open -a "IntelliJ IDEA"
+        open -a "Slack"
+        open -a "Microsoft Outlook"
+        open -a "Microsoft Teams"
+        open -a "Notes"
+        open -a joplin
+        #open -a "WhatsApp"
+        sap_backup
+}
+
+__find_older() {
+    if [ -z $1 ] 
+        then 
+        echo "please provide number of days."
+        return  0
+    fi
+    days="$1"
+    find . -mtime +${days} -print
+
+}
+
+__delete_older() {
+    if [ -z $1 ] 
+        then 
+        echo "please provide number of days."
+        return  0
+    fi
+    days="$1"
+    find . -mtime +${days} | xargs rm -fr
+
+}
+alias find_older1m='__find_older 30'
+alias delete_older1m='__delete_older 30'
+
+#AI
+##to install ollama: https://ollama.com/download. models: https://ollama.com/library
+alias ollama_r='ollama run llama3'
+alias ollama_c='ollama run codellama'
+function __pyvenv_create() {
+  if [ -z "$1" ]; then
+    echo "Error: Please provide a name for the virtual environment."
+    return 0
+  fi
+
+  venv_name="$1"
+  python3 -m venv "$venv_name"
+
+  # Check if creation was successful
+  if [ $? -eq 0 ]; then
+    echo "Virtual environment '$venv_name' created successfully."
+    export VIRTUAL_ENV_NAME="$venv_name"
+  else
+    echo "Error: Failed to create virtual environment."
+  fi
+}
+function __pyvenv_activate() {
+  if [ -z "$VIRTUAL_ENV_NAME" ]; then
+    echo "Error: VIRTUAL_ENV_NAME environment variable is not set."
+    return 1  
+  fi
+
+  venv_name="$VIRTUAL_ENV_NAME"
+
+  if [ ! -d "$venv_name/bin" ]; then
+    echo "Error: Virtual environment '$venv_name' not found."
+    return 1
+  fi
+
+  source "$venv_name/bin/activate"
+  echo "Virtual environment '$venv_name' activated."
+}
+function __pyvenv_deactivate () {
+  if [ -z "$VIRTUAL_ENV" ]; then
+    echo "No virtual environment is currently active."
+    return 0  
+  fi
+  deactivate
+  echo "Virtual environment deactivated."
+}
+
+alias pyvenv_c='__pyvenv_create'
+alias pyvenv_a='__pyvenv_activate'
+alias pyvenv_d='__pyvenv_deactivate'
+#AI
